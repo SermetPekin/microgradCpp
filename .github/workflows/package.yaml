@@ -35,8 +35,9 @@ jobs:
     # Step 3: Build and Run Tests
     - name: Build and run tests
       run: |
-        mkdir build
-        cd build
-        cmake ..
-        make
-        ./main  
+        # mkdir build
+        # cd build
+        # cmake ..
+        # make
+        # ./main  
+        make test 
