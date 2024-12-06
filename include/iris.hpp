@@ -22,6 +22,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+
 #ifndef IRIS_LOADER_HPP
 #define IRIS_LOADER_HPP
 
@@ -67,7 +69,7 @@ public:
 
         while (std::getline(file, line)) {
             if (line.empty()) {
-                continue; // skip empty lines
+                continue;  
             }
 
             std::stringstream ss(line);
