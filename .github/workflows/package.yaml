@@ -1,0 +1,39 @@
+name: Run Google Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Install Dependencies
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential cmake g++ libgtest-dev
+        # Build and install Google Test
+        cd /usr/src/googletest
+        sudo cmake .
+        sudo make
+        sudo cp -r include/gtest /usr/local/include
+        sudo cp -r lib/*.a /usr/local/lib
+
+    # Step 3: Build and Run Tests
+    - name: Build and run tests
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+        ./test_output # Replace with the name of your test executable if different
