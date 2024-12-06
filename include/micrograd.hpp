@@ -36,5 +36,6 @@ THE SOFTWARE.
 #include "mlp.hpp"
 #include "sgd.hpp"
 #include "iris.hpp"
+#include "easy.hpp"
 
 #endif

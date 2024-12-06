@@ -1,3 +1,33 @@
+#ifndef EASY_HPP
+#define EASY_HPP
+
+/*
+MIT License
+
+Copyright (c) [2024] Sermet Pekin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+#include <iostream>
+#include <random>
+#include <utility>
 
 #include <iostream>
 #include <random>
@@ -5,18 +35,59 @@
 
 #include "micrograd.hpp"
 
-using namespace microgradCpp ; 
+#include "types.hpp"
 
+using namespace microgradCpp;
 
-int main()
+DatasetType get_iris()
+{
+    // Load Iris dataset
+    std::vector<std::vector<std::shared_ptr<Value>>> inputs;
+    std::vector<std::vector<std::shared_ptr<Value>>> targets;
+    std::string url = "./data/iris.csv";
+
+    IrisLoader::load_iris(url, inputs, targets);
+
+    DatasetType dataset;
+    for (size_t i = 0; i < inputs.size(); ++i)
+    {
+        dataset.push_back({inputs[i], targets[i]});
+    }
+    return dataset;
+}
+
+void shuffle(DatasetType &dataset)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    gen.seed(42); // A fixed seed for reproducibility
+    std::shuffle(dataset.begin(), dataset.end(), gen);
+}
+void train_test_split(
+    const DatasetType &dataset,
+    double TRAIN_SIZE,
+      ColRows &train_inputs,
+      ColRows &train_targets,
+      ColRows &test_inputs,
+      ColRows &test_targets)
 {
 
+    size_t train_size = static_cast<size_t>(dataset.size() * TRAIN_SIZE);
 
-    DatasetType dataset = get_iris();
-
-    shuffle(dataset);
-
-    double TRAIN_SIZE{0.8};
+    for (size_t i = 0; i < train_size; ++i)
+    {
+        train_inputs.push_back(dataset[i].first);
+        train_targets.push_back(dataset[i].second);
+    }
+    for (size_t i = train_size; i < dataset.size(); ++i)
+    {
+        test_inputs.push_back(dataset[i].first);
+        test_targets.push_back(dataset[i].second);
+    }
+}
+ 
+void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
+{
 
     // Split into train and test sets (80-20 split)
     ColRows train_inputs, train_targets;
@@ -24,14 +95,10 @@ int main()
 
     train_test_split(dataset, TRAIN_SIZE, train_inputs, train_targets, test_inputs, test_targets);
 
-    // Create MLP model
-    // Input: 4 features, hidden layers: [7,7], output: 3 classes
-    MLP model(4, {10, 10, 3});
-
     // Create SGD optimizer with a learning rate of 0.005
-    SGD optimizer(0.01);
+    SGD optimizer(lr);
 
-    int epochs = 100;
+    // int epochs = 100;
     for (int epoch = 0; epoch < epochs; ++epoch)
     {
         double total_loss = 0.0;
@@ -92,20 +159,8 @@ int main()
             std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
         }
     }
-
-    return 0;
 }
 
 
 
-/*
-Notes
------------
-
-g++ -std=c++17 -Iinclude -O2 -o main main.cpp
-
-// or 
-make run 
-
-
-*/
+#endif // EASY_HPP

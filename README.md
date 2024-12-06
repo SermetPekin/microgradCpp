@@ -31,6 +31,9 @@ This project aims to be easy to read and modify, making it a great learning tool
 
 ```C++ 
     // main.cpp 
+    
+#include "micrograd.hpp"
+using namespace microgradCpp;
 
 int main()
 {
@@ -51,6 +54,7 @@ int main()
 
     return 0;
 }
+
 ```
 
 ### Building
