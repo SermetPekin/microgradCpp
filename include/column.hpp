@@ -1,3 +1,5 @@
+#ifndef COLUMNAR_DATA_HPP
+#define COLUMNAR_DATA_HPP
 /*
 MIT License
 
@@ -22,8 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef COLUMNAR_DATA_HPP
-#define COLUMNAR_DATA_HPP
+
 
 #include <vector>
 #include <string>

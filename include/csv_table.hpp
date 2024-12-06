@@ -1,3 +1,5 @@
+#ifndef CSV_LOADER_HPP
+#define CSV_LOADER_HPP
 /*
 MIT License
 
@@ -22,8 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#ifndef CSV_LOADER_HPP
-#define CSV_LOADER_HPP
+
 
 #include "column.hpp"
 #include <fstream>
@@ -53,11 +54,11 @@ public:
         // Create an empty table
         Table table;
 
-        // Initialize vectors for each column
+        
         vv_double numeric_columns(column_types.size());
        vv_string string_columns(column_types.size());
 
-        // Read the file line by line
+         
         std::string line;
         size_t line_count = 0;
         while (std::getline(file, line)) {
@@ -91,7 +92,7 @@ public:
 
         file.close();
 
-        // Add columns to the table
+ 
         for (size_t i = 0; i < column_names.size(); ++i) {
             if (column_types[i] == "double") {
                 table.add_column(column_names[i], numeric_columns[i]);
@@ -104,7 +105,7 @@ public:
     }
 
 private:
-    // Helper function to trim whitespace and quotes
+    
     static void trim(std::string& s) {
         // Remove leading whitespace and quotes
         size_t start_pos = s.find_first_not_of(" \t\"");
