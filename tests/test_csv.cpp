@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include <string>
 #include <stdexcept>
 
-constexpr std::string iris_path= "./data/iris.csv"; 
+inline std::string iris_path= "./data/iris.csv"; 
 
 // Test if the CSV file is loaded successfully
 TEST(CSVLoaderTest, LoadCSVSuccess) {
