@@ -127,12 +127,11 @@ public:
 };
 
 // Operator Overloads (assuming both operands are std::shared_ptr<Value>)
+// ========================================================================
+//    Addition Templated Functions  
+// ========================================================================
 
-// Operator Overload Template
-// Addition (supporting both Value and double)
 
-// Addition (supporting both Value and double)
-// Addition for two std::shared_ptr<Value> operands
 inline std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
     auto out = std::make_shared<Value>(lhs->data + rhs->data);
@@ -146,7 +145,7 @@ inline std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const
     return out;
 }
 
-// Template for Addition (supporting std::shared_ptr<Value> and double)
+ 
 template <typename T>
 std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
@@ -173,7 +172,7 @@ std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const T &rhs
     return out;
 }
 
-// Template for Addition (supporting double and std::shared_ptr<Value>)
+ 
 template <typename T>
 std::shared_ptr<Value> operator+(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -197,7 +196,7 @@ std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const std::s
     return out;
 }
 
-// Template for Subtraction (supporting std::shared_ptr<Value> and double)
+ 
 template <typename T>
 std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
@@ -224,7 +223,7 @@ std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const T &rhs
     return out;
 }
 
-// Template for Subtraction (supporting double and std::shared_ptr<Value>)
+ 
 template <typename T>
 std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -232,10 +231,8 @@ std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs
 }
 
 // ========================================================================
-//    Multiplying  
+//    Multiplication  
 // ========================================================================
-
-
 inline  
 std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -250,7 +247,7 @@ std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::s
     return out;
 }
 
-// Template for Multiplication (supporting std::shared_ptr<Value> and double)
+ 
 template <typename T>
 std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
@@ -278,7 +275,7 @@ std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const T &rhs
     return out;
 }
 
-// Template for Multiplication (supporting double and std::shared_ptr<Value>)
+ 
 template <typename T>
 std::shared_ptr<Value> operator*(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -302,8 +299,6 @@ std::shared_ptr<Value> operator*(const T &lhs, const std::shared_ptr<Value> &rhs
 // ========================================================================
 //    Division Templated Functions  
 // ========================================================================
-
-// Specialization for std::shared_ptr<Value> / std::shared_ptr<Value>
 inline 
 std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -335,13 +330,15 @@ std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &lhs, const T &rhs
     return lhs / rhs_value;  
 } 
 
-// Template for operator/ (supporting double / std::shared_ptr<Value>)
+ 
 template <typename T>
 std::shared_ptr<Value> operator/(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
     std::shared_ptr<Value> lhs_value = std::make_shared<Value>(lhs);
     return rhs / lhs_value; // Reuse the previous operator
 }
+
+// TODO Division template op.
 
 // Division
 // std::shared_ptr<Value> operator/(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {

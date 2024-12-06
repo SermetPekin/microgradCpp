@@ -16,7 +16,7 @@ public:
     static void load_iris(const std::string& url,
                           std::vector<std::vector<std::shared_ptr<Value>>>& inputs,
                           std::vector<std::vector<std::shared_ptr<Value>>>& targets) {
-        // Map species to one-hot encoding based on your dataset’s actual species strings
+        
         std::unordered_map<std::string, std::vector<double>> species_map = {
             {"Setosa", {1.0, 0.0, 0.0}},
             {"Versicolor", {0.0, 1.0, 0.0}},
@@ -67,7 +67,7 @@ public:
             }
             inputs.push_back(row);
 
-            // Now parse the species
+           
             if (!std::getline(ss, value, ',')) {
                 throw std::runtime_error("No species column found in line: " + line);
             }

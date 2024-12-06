@@ -8,8 +8,8 @@
 #include <random>
 #include <iostream>
 
-// ReLU Activation Function
-// Creates new nodes so gradient flows correctly.
+// ReLU Act. Func.
+ 
 inline
 std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value>>& inputs) {
     std::vector<std::shared_ptr<Value>> outputs;
@@ -31,11 +31,11 @@ std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value
 }
 
 // Dropout
-// Creates nodes so gradient flows. If dropped, gradient=0; if kept, gradient passes through.
+
 inline 
 std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Value>>& inputs, double rate, bool training) {
     if (!training) {
-        // No dropout during evaluation, just return inputs directly.
+         
         return inputs;
     }
 
@@ -63,7 +63,7 @@ std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Va
 }
 
 // Softmax Activation Function
-// Implemented using exp and arithmetic on Value nodes for proper gradient tracking.
+ 
 inline
 std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared_ptr<Value>>& inputs) {
     // sum_exp = sum of exp(input)
@@ -83,12 +83,12 @@ std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared_ptr<Va
     return outputs;
 }
 
-// MLP class
+ 
 class MLP {
 public:
     std::vector<std::shared_ptr<Linear>> layers;
 
-    // Constructor: Create an MLP with specified layer sizes
+ 
     MLP(int in_features, const std::vector<int>& layer_sizes) {
         int current_in = in_features;
         for (int size : layer_sizes) {
@@ -97,7 +97,7 @@ public:
         }
     }
 
-    // Forward pass
+  
     std::vector<std::shared_ptr<Value>> forward(const std::vector<std::shared_ptr<Value>>& inputs, bool training = true) {
         auto activations = inputs;
         for (size_t i = 0; i < layers.size(); ++i) {
@@ -113,7 +113,7 @@ public:
         return softmax(activations);
     }
 
-    // Get all parameters (weights and biases)
+   
     std::vector<std::shared_ptr<Value>> parameters() const {
         std::vector<std::shared_ptr<Value>> params;
         for (const auto& layer : layers) {

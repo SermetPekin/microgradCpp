@@ -11,13 +11,6 @@ public:
         return "Function not implemented yet.";
     }
 };
-
-/*
-
-void notImplemented() {
-    throw NotImplementedException();
-}
  
- */
 
 #endif //EXC_HPP

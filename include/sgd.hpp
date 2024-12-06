@@ -25,7 +25,7 @@ void step(const std::vector<std::shared_ptr<Value>>& parameters) {
 
 
 
-    // Zero the gradients
+     
     void zero_grad(const std::vector<std::shared_ptr<Value>>& parameters) {
         for (auto& param : parameters) {
             param->grad = 0.0; // Reset gradients to zero

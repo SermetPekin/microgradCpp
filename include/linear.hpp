@@ -15,7 +15,7 @@ public:
 
     Linear(int in_features, int out_features)
         : in_features(in_features), out_features(out_features) {
-        // Initialize weights and biases randomly
+        
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dist(-1.0, 1.0);
