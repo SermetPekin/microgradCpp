@@ -22,13 +22,15 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y build-essential cmake g++ libgtest-dev
-        # Manually build and install Google Test
+        # Build Google Test from source
         cd /usr/src/googletest
-        sudo cmake .
+        sudo cmake -DBUILD_SHARED_LIBS=ON . 
         sudo make
+        # Install headers and built libraries
         sudo cp -r googletest/include/gtest /usr/local/include
-        sudo cp googletest/lib/*.a /usr/local/lib
-        sudo cp googlemock/lib/*.a /usr/local/lib
+        sudo cp -r googlemock/include/gmock /usr/local/include
+        sudo cp googletest/*.a /usr/local/lib
+        sudo cp googlemock/*.a /usr/local/lib
 
     # Step 3: Build and Run Tests
     - name: Build and run tests
