@@ -39,4 +39,4 @@ jobs:
         cd build
         cmake ..
         make
-        ./test_output # Replace with your test executable
+        ./main  
