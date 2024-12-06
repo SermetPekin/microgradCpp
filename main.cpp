@@ -26,11 +26,17 @@ THE SOFTWARE.
 #include <random>
 #include <utility>
 
-#include "micrograd.hpp"
 
 #include <iostream>
 #include <random>
 #include <utility>
+
+#include "micrograd.hpp"
+
+#include "types.hpp"
+
+using namespace microgradCpp ; 
+
 /*
 Notes
 -----------
@@ -43,8 +49,7 @@ make run
 
 */
 
-using DatasetType = std::vector<std::pair<std::vector<std::shared_ptr<Value>>, std::vector<std::shared_ptr<Value>>>>;
-using ColRows = std::vector<std::vector<std::shared_ptr<Value>>>;
+
 
 DatasetType get_iris()
 {
