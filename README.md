@@ -1,6 +1,6 @@
 
 ![C++](https://img.shields.io/badge/C%2B%2B-17-blue.svg) ![License](https://img.shields.io/github/license/SermetPekin/microgradCpp)  ![MicrogradCpp](https://img.shields.io/badge/MicrogradCpp-C++-green)
-
+[![Run Google Tests](https://github.com/SermetPekin/microgradCpp/actions/workflows/package.yaml/badge.svg)](https://github.com/SermetPekin/microgradCpp/actions/workflows/package.yaml)
 
 # MicrogradCpp
 

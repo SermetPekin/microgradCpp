@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++20 -Iinclude -I/usr/local/include  # Adjust path to gtest include
-LDFLAGS = -L/usr/local/lib -lgtest -lgtest_main -pthread  # Adjust path to gtest lib
+CXXFLAGS = -std=c++20 -Iinclude -I/usr/local/include   
+LDFLAGS = -L/usr/local/lib -lgtest -lgtest_main -pthread   
 
 # Output binary for main program
 TARGET = main
