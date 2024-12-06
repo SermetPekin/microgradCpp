@@ -27,10 +27,10 @@ jobs:
         sudo cmake -DBUILD_SHARED_LIBS=ON . 
         sudo make
         # Install headers and built libraries
-        sudo cp -r googletest/include/gtest /usr/local/include
-        sudo cp -r googlemock/include/gmock /usr/local/include
-        sudo cp googletest/*.a /usr/local/lib
-        sudo cp googlemock/*.a /usr/local/lib
+        # sudo cp -r googletest/include/gtest /usr/local/include
+        # sudo cp -r googlemock/include/gmock /usr/local/include
+        # sudo cp googletest/*.a /usr/local/lib
+        # sudo cp googlemock/*.a /usr/local/lib
 
     # Step 3: Build and Run Tests
     - name: Build and run tests
