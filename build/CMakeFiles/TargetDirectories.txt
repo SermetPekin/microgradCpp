@@ -1,7 +1,0 @@
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/main.dir
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/test_output.dir
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/run.dir
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/test_run.dir
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/clean_all.dir
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/edit_cache.dir
-/Users/sermetpekin/Documents/git_repos_public/PUBLIC_microgradcpp/microgradCpp/build/CMakeFiles/rebuild_cache.dir
