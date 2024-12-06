@@ -4,3 +4,12 @@ main
 test_output
 
 build/
+ignore*/
+ignore*.*
+--*/
+--*.*
+
+*.o
+*.a
+
+

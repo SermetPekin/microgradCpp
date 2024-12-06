@@ -32,30 +32,25 @@ This project aims to be easy to read and modify, making it a great learning tool
 ```C++ 
     // main.cpp 
 
-    // ...
+int main()
+{
+
     DatasetType dataset = get_iris();
-
     shuffle(dataset);
-
     double TRAIN_SIZE{0.8};
-
-    // Split into train and test sets (80-20 split)
-    ColRows train_inputs, train_targets;
-    ColRows test_inputs, test_targets;
-
-    train_test_split(dataset, TRAIN_SIZE, train_inputs, train_targets, test_inputs, test_targets);
-
+    
     // Create MLP model
-    // Input: 4 features, hidden layers: [10,10], output: 3 classes
+    // Input: 4 features, hidden layers: [7,7], output: 3 classes
+    // Define the model and hyperparameters
     MLP model(4, {10, 10, 3});
-
-    // Create SGD optimizer with a learning rate of 0.005
-    SGD optimizer(0.01);
-
+    double learning_rate = 0.01;
     int epochs = 100;
-    for (int epoch = 0; epoch < epochs; ++epoch)
-    {  //...
-    } 
+
+    // Train and evaluate the model
+    train_eval(dataset, TRAIN_SIZE, model, learning_rate, epochs);
+
+    return 0;
+}
 ```
 
 ### Building
