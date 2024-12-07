@@ -4,7 +4,9 @@
 
 # MicrogradCpp
 
-**MicrogradCPP** is a C++ library inspired by [Andrej Karpathy’s micrograd](https://github.com/karpathy/micrograd) that provides a small, educational automatic differentiation engine and a simple neural network library on top. It’s geared toward understanding backpropagation, building small neural networks, and experimenting with gradient-based learning—entirely in C++.
+**MicrogradCPP** is a C++ library inspired by [Andrej Karpathy’s micrograd](https://github.com/karpathy/micrograd) that provides a small, educational automatic differentiation engine and a simple neural network library on top. 
+
+It’s geared toward understanding backpropagation, building small neural networks, and experimenting with gradient-based learning—entirely in C++.
 
 This project aims to be easy to read and modify, making it a great learning tool for those who want to understand how automatic differentiation, feed-forward neural networks, and basic optimizers work at a low level.
 

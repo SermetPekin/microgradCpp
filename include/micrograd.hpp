@@ -38,4 +38,4 @@ THE SOFTWARE.
 #include "iris.hpp"
 #include "easy.hpp"
 
-#endif
+#endif // MICROGRADCPP_HPP

@@ -5,12 +5,10 @@
 
 #include "micrograd.hpp"
 
-using namespace microgradCpp ; 
-
+using namespace microgradCpp;
 
 int main()
 {
-
 
     DatasetType dataset = get_iris();
 
@@ -96,16 +94,14 @@ int main()
     return 0;
 }
 
-
-
 /*
 Notes
 -----------
 
 g++ -std=c++17 -Iinclude -O2 -o main main.cpp
 
-// or 
-make run 
+// or
+make run
 
 
 */

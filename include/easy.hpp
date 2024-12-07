@@ -34,7 +34,6 @@ THE SOFTWARE.
 #include <utility>
 
 #include "micrograd.hpp"
-
 #include "types.hpp"
 
 using namespace microgradCpp;
