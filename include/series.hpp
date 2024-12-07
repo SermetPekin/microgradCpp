@@ -37,7 +37,7 @@
 #include <type_traits>
 #include <limits> // For NaN
 
-namespace evds
+namespace microgradCpp 
 {
     using Cell = std::variant<std::monostate, double, long long, std::string>;
 

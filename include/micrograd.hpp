@@ -41,4 +41,6 @@ THE SOFTWARE.
 #include "mlp.hpp"
 #include "sgd.hpp"
 #include "console_utils.hpp"
+#include "dataframe.hpp"
+#include "dataframe_utils.hpp"
 #endif // MICROGRADCPP_HPP
