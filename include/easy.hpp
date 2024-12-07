@@ -32,16 +32,16 @@ THE SOFTWARE.
 #include <iostream>
 #include <random>
 #include <utility>
+#include <chrono>
 
-// #include "micrograd.hpp" 
+// #include "micrograd.hpp"
 #include "types.hpp"
 #include "loss.hpp"
 #include "mlp.hpp"
 #include "sgd.hpp"
 
 using namespace microgradCpp;
-inline
-DatasetType get_iris()
+inline DatasetType get_iris()
 {
     // Load Iris dataset
     std::vector<std::vector<std::shared_ptr<Value>>> inputs;
@@ -57,22 +57,20 @@ DatasetType get_iris()
     }
     return dataset;
 }
-inline
-void shuffle(DatasetType &dataset)
+inline void shuffle(DatasetType &dataset)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
     gen.seed(42); // A fixed seed for reproducibility
     std::shuffle(dataset.begin(), dataset.end(), gen);
 }
-inline
-void train_test_split(
-      const DatasetType &dataset,
-      double TRAIN_SIZE,
-      ColRows &train_inputs,
-      ColRows &train_targets,
-      ColRows &test_inputs,
-      ColRows &test_targets)
+inline void train_test_split(
+    const DatasetType &dataset,
+    double TRAIN_SIZE,
+    ColRows &train_inputs,
+    ColRows &train_targets,
+    ColRows &test_inputs,
+    ColRows &test_targets)
 {
 
     size_t train_size = static_cast<size_t>(dataset.size() * TRAIN_SIZE);
@@ -88,9 +86,8 @@ void train_test_split(
         test_targets.push_back(dataset[i].second);
     }
 }
- 
-inline
-void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
+
+inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model, double lr = 0.01, int epochs = 100)
 {
 
     // Split into train and test sets (80-20 split)
@@ -101,6 +98,8 @@ void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, dou
 
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(lr);
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     // int epochs = 100;
     for (int epoch = 0; epoch < epochs; ++epoch)
@@ -161,10 +160,15 @@ void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, dou
 
             double accuracy = static_cast<double>(correct) / test_inputs.size();
             std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
+
+            if (epoch == epochs - 1)
+            {
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                std::cout << "Duration: " << duration.count() << " seconds" << std::endl;
+            }
         }
     }
 }
-
-
 
 #endif // EASY_HPP
