@@ -8,19 +8,21 @@
 #include <string>
 #include <cassert>
 #include <fstream>
-
+#include <iostream>
+#include <vector>
+#include <string>
 #include <unordered_map>
 #include "mlp.hpp"
+#include "console_utils.hpp"
 
 using vv_string = std::vector<std::vector<std::string>>;
 using vv_double = std::vector<std::vector<double>>;
-
-void log_model_info(const std::vector<int> &layer_sizes,
-                    size_t input_features,
-                    size_t output_targets,
-                    size_t train_size,
-                    size_t test_size,
-                    double TRAIN_RATIO);
+inline void log_model_info(const std::vector<int> &layer_sizes,
+                           size_t input_features,
+                           size_t output_targets,
+                           size_t train_size,
+                           size_t test_size,
+                           double TRAIN_RATIO);
 
 template <class T>
 inline void write_to_csv(const std::vector<std::vector<T>> &data, const std::string &filename)
@@ -131,31 +133,8 @@ inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has
     return converted_data;
 }
 
-// Function to format shapes for display
-std::string format_shape(size_t rows, size_t cols)
-{
-    std::ostringstream oss;
-    oss << rows << " x " << cols;
-    return oss.str();
-}
-
-// Function to display a header for error messages
-void display_header(const std::string &message)
-{
-    std::cout << "\n====================================================\n";
-    std::cout << "🚨 " << message << "\n";
-    std::cout << "====================================================\n";
-}
-
-// Function to display dataset and model shapes
-void display_shapes(const std::string &label, size_t input_size, size_t output_size)
-{
-    std::cout << "📊 " << label << " Shape: [" << input_size << " features -> " << output_size << " targets]\n";
-    std::cout << "----------------------------------------------------\n";
-}
-
 // Function to validate the dataset and model
-bool validate_dataset_and_model(const DatasetType &dataset, const MLP &model, double TRAIN_RATIO)
+inline bool validate_dataset_and_model(const DatasetType &dataset, const MLP &model, double TRAIN_RATIO)
 {
     if (dataset.empty())
     {
@@ -165,15 +144,6 @@ bool validate_dataset_and_model(const DatasetType &dataset, const MLP &model, do
 
     size_t input_size = model.input_size();
     size_t output_size = model.output_size();
-
-    // Example model: 4 input features, 2 hidden layers with 7 neurons each, 3 output targets
-    // std::vector<int> layer_sizes = {7, 7, 3};
-
-    // // Example dataset sizes
-    // size_t input_features = 4;
-    // size_t output_targets = 3;
-    // size_t train_size = 120;
-    // size_t test_size = 30;
 
     int sz = dataset.size();
 
@@ -232,15 +202,12 @@ bool validate_dataset_and_model(const DatasetType &dataset, const MLP &model, do
     return true;
 }
 
-#include <iostream>
-#include <vector>
-#include <string>
-
-void log_model_info(const std::vector<int> &layer_sizes,
-                    size_t input_features,
-                    size_t output_targets,
-                    size_t train_size,
-                    size_t test_size, double TRAIN_RATIO)
+inline void log_model_info(const std::vector<int> &layer_sizes,
+                           size_t input_features,
+                           size_t output_targets,
+                           size_t train_size,
+                           size_t test_size,
+                           double TRAIN_RATIO)
 {
     std::cout << "\n📊  Model and Dataset Info\n";
     std::cout << "===========================================\n";
@@ -259,8 +226,8 @@ void log_model_info(const std::vector<int> &layer_sizes,
     // Log dataset info
     std::cout << "\n📂 Dataset Info:\n";
     std::cout << "   ┌────────────────────────┐\n";
-    std::cout << "   │ Training Samples:  " << train_size * TRAIN_RATIO  << " │\n";
-    std::cout << "   │ Testing Samples:    " << test_size * (1-TRAIN_RATIO)<< " │\n";
+    std::cout << "   │ Training Samples:  " << train_size * TRAIN_RATIO << " │\n";
+    std::cout << "   │ Testing Samples:    " << test_size * (1 - TRAIN_RATIO) << " │\n";
     std::cout << "   └────────────────────────┘\n";
     std::cout << "        Train ratio       " << TRAIN_RATIO << "           \n";
     std::cout << "===========================================\n\n";

@@ -41,6 +41,7 @@ THE SOFTWARE.
 #include "dataprocessor.hpp"
 #include "datasetType.hpp"
 #include "console_utils.hpp"
+#include "data_utils.hpp"
 
 #include "types.hpp"
 using namespace microgradCpp;

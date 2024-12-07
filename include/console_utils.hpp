@@ -5,8 +5,7 @@
 #include <iostream>
 namespace microgradCpp
 {
-
-    void epic_failure_exit(const std::string &reason)
+    inline void epic_failure_exit(const std::string &reason)
     {
         std::cout << "\n💥💥💥 BOOM! 💥💥💥" << std::endl;
         std::cout << "❌ Uh-oh! Something went wrong: [ 🔥 " << reason << " 🔥 ] " << std::endl;
@@ -15,6 +14,28 @@ namespace microgradCpp
         std::cout << "🔥🔥🔥 Program terminated. 🔥🔥🔥\n"
                   << std::endl;
         std::exit(EXIT_FAILURE);
+    }
+
+    // Function to format shapes for display
+
+    inline std::string format_shape(size_t rows, size_t cols)
+    {
+        std::ostringstream oss;
+        oss << rows << " x " << cols;
+        return oss.str();
+    }
+
+    inline void display_header(const std::string &message)
+    {
+        std::cout << "\n====================================================\n";
+        std::cout << "🚨 " << message << "\n";
+        std::cout << "====================================================\n";
+    }
+
+    inline void display_shapes(const std::string &label, size_t input_size, size_t output_size)
+    {
+        std::cout << "📊 " << label << " Shape: [" << input_size << " features -> " << output_size << " targets]\n";
+        std::cout << "----------------------------------------------------\n";
     }
 
 }
