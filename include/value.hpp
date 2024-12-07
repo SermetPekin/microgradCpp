@@ -25,7 +25,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
 #include <vector>
 #include <memory>
 #include <functional>
@@ -46,11 +45,11 @@ public:
     std::function<void()> _backward; // Backward function for autograd
 
     // Constructor
-    Value(double data, const std::string &label = "")
+    constexpr Value(double data, const std::string &label = "")
         : data(data), grad(0.0), label(label), _backward([]() {}) {}
 
     // Copy constructor
-    Value(const Value &other)
+    constexpr Value(const Value &other)
         : data(other.data), grad(other.grad), label(other.label), parents(other.parents), _backward(other._backward) {}
 
     // Add a parent to the computational graph (ensuring no duplicates)
@@ -114,7 +113,7 @@ public:
     std::shared_ptr<Value> exp()
     {
 
-       // throw NotImplementedException();
+        // throw NotImplementedException();
 
         auto out = std::make_shared<Value>(std::exp(data));
         out->add_parent(shared_from_this());
@@ -149,14 +148,15 @@ public:
         os << ", parents=" << v.parents.size() << ")";
         return os;
     }
+
+    // Value Class constructor
 };
 
 // Operator Overloads (assuming both operands are std::shared_ptr<Value>)
 // ========================================================================
-//    Addition Templated Functions  
+//    Addition Templated Functions
 // ========================================================================
-
-
+// +[V, V ]
 inline std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
     auto out = std::make_shared<Value>(lhs->data + rhs->data);
@@ -170,7 +170,7 @@ inline std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const
     return out;
 }
 
- 
+// +[V , T]
 template <typename T>
 std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
@@ -197,18 +197,20 @@ std::shared_ptr<Value> operator+(const std::shared_ptr<Value> &lhs, const T &rhs
     return out;
 }
 
- 
+// +[T , V]
 template <typename T>
 std::shared_ptr<Value> operator+(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
     return rhs + lhs; // Reuse the above operator to avoid duplication
 }
 
+
+
 // ========================================================================
 //    Subtraction for two std::shared_ptr<Value> operands
 // ========================================================================
-inline 
-std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
+// -[V , V]
+inline std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
     auto out = std::make_shared<Value>(lhs->data - rhs->data);
     out->add_parent(lhs);
@@ -221,7 +223,7 @@ std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const std::s
     return out;
 }
 
- 
+// -[V , T]
 template <typename T>
 std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
@@ -248,7 +250,7 @@ std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const T &rhs
     return out;
 }
 
- 
+// -[T , V]
 template <typename T>
 std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -256,10 +258,10 @@ std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs
 }
 
 // ========================================================================
-//    Multiplication  
+//    Multiplication
 // ========================================================================
-inline  
-std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
+// *[V , V]
+inline std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
     auto out = std::make_shared<Value>(lhs->data * rhs->data);
     out->add_parent(lhs);
@@ -272,7 +274,7 @@ std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::s
     return out;
 }
 
- 
+// *[V , T]
 template <typename T>
 std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
@@ -300,13 +302,12 @@ std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const T &rhs
     return out;
 }
 
- 
+// *[T , V]
 template <typename T>
 std::shared_ptr<Value> operator*(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
     return rhs * lhs; // Reuse the previous operator to avoid duplication
 }
-
 // Multiplication
 // std::shared_ptr<Value> operator*(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {
 //     auto out = std::make_shared<Value>(lhs->data * rhs->data);
@@ -319,13 +320,11 @@ std::shared_ptr<Value> operator*(const T &lhs, const std::shared_ptr<Value> &rhs
 //     return out;
 // }
 
-
-
 // ========================================================================
-//    Division Templated Functions  
+//    Division Templated Functions
 // ========================================================================
-inline 
-std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
+// /[V , V]
+inline std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
     auto out = std::make_shared<Value>(lhs->data / rhs->data);
     out->add_parent(lhs);
@@ -338,24 +337,24 @@ std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &lhs, const std::s
     return out;
 }
 
- 
+// /[V , T]
 template <typename T>
 std::shared_ptr<Value> operator/(const std::shared_ptr<Value> &lhs, const T &rhs)
 {
     std::shared_ptr<Value> rhs_value;
     if constexpr (std::is_same_v<T, double>)
     {
-        rhs_value = std::make_shared<Value>(rhs);  
+        rhs_value = std::make_shared<Value>(rhs);
     }
     else
     {
-        rhs_value = rhs;  
+        rhs_value = rhs;
     }
 
-    return lhs / rhs_value;  
-} 
+    return lhs / rhs_value;
+}
 
- 
+// /[T , V]
 template <typename T>
 std::shared_ptr<Value> operator/(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
@@ -363,7 +362,7 @@ std::shared_ptr<Value> operator/(const T &lhs, const std::shared_ptr<Value> &rhs
     return rhs / lhs_value; // Reuse the previous operator
 }
 
-// TODO Division template op.
+ 
 
 // Division
 // std::shared_ptr<Value> operator/(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {
@@ -378,8 +377,7 @@ std::shared_ptr<Value> operator/(const T &lhs, const std::shared_ptr<Value> &rhs
 // }
 
 // Unary Negation
-inline 
-std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs)
+inline std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs)
 {
     auto out = std::make_shared<Value>(-lhs->data);
     out->add_parent(lhs);
