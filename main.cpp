@@ -13,7 +13,175 @@ g++ -g -o main main.cpp
 
 g++ -g -std=c++17 -Iinclude -O2 -o main main.cpp
 
+clang++  -std=c++17 -Iinclude  -g -o  main main.cpp
+
+(lldb) breakpoint set --file main.cpp --line 75
+(lldb) run
+
+(lldb) bt
+(lldb) print some_variable
+
+
+
 */
+
+#include <iostream>
+#include <vector>
+#include <memory>
+// #include "value.hpp"  // Assuming Value class is defined here
+// #include "mlp.hpp"    // Assuming MLP class is defined here
+
+using ColRows = std::vector<std::vector<std::shared_ptr<Value>>>;
+using DatasetType = std::vector<std::pair<std::vector<std::shared_ptr<Value>>, std::vector<std::shared_ptr<Value>>>>;
+
+
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <iomanip>
+#include <sstream>
+#include "value.hpp"  // Assuming Value class is defined here
+#include "mlp.hpp"    // Assuming MLP class is defined here
+
+using ColRows = std::vector<std::vector<std::shared_ptr<Value>>>;
+using DatasetType = std::vector<std::pair<std::vector<std::shared_ptr<Value>>, std::vector<std::shared_ptr<Value>>>>;
+
+// Function to format shapes for display
+std::string format_shape(size_t rows, size_t cols) {
+    std::ostringstream oss;
+    oss << rows << " x " << cols;
+    return oss.str();
+}
+
+// Function to display a header for error messages
+void display_header(const std::string& message) {
+    std::cout << "\n====================================================\n";
+    std::cout << "🚨 " << message << "\n";
+    std::cout << "====================================================\n";
+}
+
+// Function to display dataset and model shapes
+void display_shapes(const std::string& label, size_t input_size, size_t output_size) {
+    std::cout << "📊 " << label << " Shape: [" << input_size << " features -> " << output_size << " targets]\n";
+    std::cout << "----------------------------------------------------\n";
+}
+
+// Function to validate the dataset and model
+bool validate_dataset_and_model(const DatasetType& dataset, const MLP& model) {
+    if (dataset.empty()) {
+        display_header("Error: Dataset is empty!");
+        return false;
+    }
+
+    size_t input_size = model.input_size();
+    size_t output_size = model.output_size();
+
+    display_shapes("Model", input_size, output_size);
+
+    for (size_t i = 0; i < dataset.size(); ++i) {
+        const auto& inputs = dataset[i].first;
+        const auto& targets = dataset[i].second;
+
+        if (inputs.size() != input_size) {
+            display_header("Input Size Mismatch Detected");
+            std::cerr << "❌ Sample " << i << ": Expected input size " 
+                      << input_size << ", but got " << inputs.size() << "\n";
+            std::cerr << "🔹 Input Shape: [" << format_shape(inputs.size(), 1) << "]\n";
+            return false;
+        }
+
+        if (targets.size() != output_size) {
+            display_header("Target Size Mismatch Detected");
+            std::cerr << "❌ Sample " << i << ": Expected target size " 
+                      << output_size << ", but got " << targets.size() << "\n";
+            std::cerr << "🔸 Target Shape: [" << format_shape(targets.size(), 1) << "]\n";
+            return false;
+        }
+
+        // Check if inputs are valid (not null)
+        for (size_t j = 0; j < inputs.size(); ++j) {
+            if (!inputs[j]) {
+                display_header("Null Input Value Detected");
+                std::cerr << "❌ Sample " << i << ", Feature " << j << ": Null input value\n";
+                return false;
+            }
+        }
+
+        // Check if targets are valid (not null)
+        for (size_t j = 0; j < targets.size(); ++j) {
+            if (!targets[j]) {
+                display_header("Null Target Value Detected");
+                std::cerr << "❌ Sample " << i << ", Target " << j << ": Null target value\n";
+                return false;
+            }
+        }
+    }
+
+    std::cout << "✅ All checks passed! Dataset and model are ready for training.\n";
+    std::cout << "----------------------------------------------------\n";
+    return true;
+}
+
+
+// Function to validate the dataset and model
+// bool validate_dataset_and_model(const DatasetType &dataset, const MLP &model)
+// {
+//     if (dataset.empty())
+//     {
+//         std::cerr << "Error: Dataset is empty!" << std::endl;
+//         return false;
+//     }
+
+//     size_t input_size = model.input_size();
+//     size_t output_size = model.output_size();
+
+//     for (size_t i = 0; i < dataset.size(); ++i)
+//     {
+//         const auto &inputs = dataset[i].first;
+//         const auto &targets = dataset[i].second;
+
+//         if (inputs.size() != input_size)
+//         {
+//             std::cerr << "Error: Input size mismatch at sample " << i
+//                       << ". Expected: " << input_size
+//                       << ", Found: " << inputs.size() << std::endl;
+//             return false;
+//         }
+
+//         if (targets.size() != output_size)
+//         {
+//             std::cerr << "Error: Target size mismatch at sample " << i
+//                       << ". Expected: " << output_size
+//                       << ", Found: " << targets.size() << std::endl;
+//             return false;
+//         }
+
+//         // Check if inputs are valid (not null)
+//         for (size_t j = 0; j < inputs.size(); ++j)
+//         {
+//             if (!inputs[j])
+//             {
+//                 std::cerr << "Error: Null input value found at sample " << i
+//                           << ", feature " << j << std::endl;
+//                 return false;
+//             }
+//         }
+
+//         // Check if targets are valid (not null)
+//         for (size_t j = 0; j < targets.size(); ++j)
+//         {
+//             if (!targets[j])
+//             {
+//                 std::cerr << "Error: Null target value found at sample " << i
+//                           << ", target " << j << std::endl;
+//                 return false;
+//             }
+//         }
+//     }
+
+//     std::cout << "Dataset and model validation passed!" << std::endl;
+//     return true;
+// }
 
 int main()
 {
@@ -32,7 +200,14 @@ int main()
 
     // Create MLP model
     // Input: 4 features, hidden layers: [7,7], output: 3 classes
-    MLP model(4, {10, 10, 3});
+    MLP model(4, {7, 7, 3});
+
+    // Validate dataset and model
+    if (!validate_dataset_and_model(dataset, model))
+    {
+        std::cerr << "Validation failed. Exiting." << std::endl;
+        return 1;
+    }
 
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(0.01);

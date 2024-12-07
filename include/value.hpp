@@ -45,11 +45,11 @@ public:
     std::function<void()> _backward; // Backward function for autograd
 
     // Constructor
-      Value(double data, const std::string &label = "")
+    Value(double data, const std::string &label = "")
         : data(data), grad(0.0), label(label), _backward([]() {}) {}
 
     // Copy constructor
-      Value(const Value &other)
+    Value(const Value &other)
         : data(other.data), grad(other.grad), label(other.label), parents(other.parents), _backward(other._backward) {}
 
     // Add a parent to the computational graph (ensuring no duplicates)
@@ -204,8 +204,6 @@ std::shared_ptr<Value> operator+(const T &lhs, const std::shared_ptr<Value> &rhs
     return rhs + lhs; // Reuse the above operator to avoid duplication
 }
 
-
-
 // ========================================================================
 //    Subtraction for two std::shared_ptr<Value> operands
 // ========================================================================
@@ -263,6 +261,12 @@ std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs
 // *[V , V]
 inline std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
+
+    if (!lhs || !rhs)
+    {
+        throw std::runtime_error("Null pointer in operator*");
+    }
+
     auto out = std::make_shared<Value>(lhs->data * rhs->data);
     out->add_parent(lhs);
     out->add_parent(rhs);
@@ -361,8 +365,6 @@ std::shared_ptr<Value> operator/(const T &lhs, const std::shared_ptr<Value> &rhs
     std::shared_ptr<Value> lhs_value = std::make_shared<Value>(lhs);
     return rhs / lhs_value; // Reuse the previous operator
 }
-
- 
 
 // Division
 // std::shared_ptr<Value> operator/(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {

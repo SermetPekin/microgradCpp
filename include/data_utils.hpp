@@ -58,7 +58,7 @@ inline std::unordered_map<std::string, double> create_target_encoding(const std:
     return encoding_map;
 }
 
-inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has_header = false)
+ inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has_header = false)
 {
     vv_double converted_data;
     size_t start_index = has_header ? 1 : 0;
@@ -67,7 +67,18 @@ inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has
     std::vector<std::string> target_column;
     for (size_t i = start_index; i < data.size(); ++i)
     {
+        if (data[i].empty())
+        {
+            std::cerr << "Warning: Skipping empty row at index " << i << std::endl;
+            continue;
+        }
+
         target_column.push_back(data[i].back());
+    }
+
+    if (target_column.empty())
+    {
+        throw std::runtime_error("Error: No target column found in the data.");
     }
 
     // Create target encoding map
@@ -75,6 +86,12 @@ inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has
 
     for (size_t i = start_index; i < data.size(); ++i)
     {
+        if (data[i].empty())
+        {
+            std::cerr << "Warning: Skipping empty row at index " << i << std::endl;
+            continue;
+        }
+
         std::vector<double> converted_row;
 
         // Convert all but the last column (features) to double
@@ -86,17 +103,25 @@ inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has
             }
             catch (const std::invalid_argument &)
             {
+                std::cerr << "Warning: Invalid numeric value in row " << i << ", column " << j << ": '" << data[i][j] << "', defaulting to 0.0" << std::endl;
                 converted_row.push_back(0.0); // Fallback for invalid numeric conversion
             }
         }
 
         // Encode the target column using the encoding map
-        converted_row.push_back(target_encoding_map[data[i].back()]);
+        std::string target_value = data[i].back();
+        if (target_encoding_map.find(target_value) == target_encoding_map.end())
+        {
+            throw std::runtime_error("Error: Target value '" + target_value + "' not found in encoding map.");
+        }
+        converted_row.push_back(target_encoding_map[target_value]);
+
         converted_data.push_back(converted_row);
     }
 
     return converted_data;
 }
+
 
 // #include <iostream>
 // #include <vector>

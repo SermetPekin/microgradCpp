@@ -24,7 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
 #include "linear.hpp"
 #include <vector>
 #include <memory>
@@ -33,19 +32,24 @@ THE SOFTWARE.
 #include <iostream>
 
 // ReLU Act. Func.
- 
-inline
-std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value>>& inputs) {
+
+inline std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value>> &inputs)
+{
     std::vector<std::shared_ptr<Value>> outputs;
-    for (auto& input : inputs) {
+    for (auto &input : inputs)
+    {
         double val = (input->data > 0) ? input->data : 0.0;
         auto out = std::make_shared<Value>(val);
         out->add_parent(input);
-        out->_backward = [input, out]() {
+        out->_backward = [input, out]()
+        {
             // d/dx ReLU(x)=1 if x>0 else 0
-            if (input->data > 0) {
+            if (input->data > 0)
+            {
                 input->grad += out->grad;
-            } else {
+            }
+            else
+            {
                 input->grad += 0;
             }
         };
@@ -56,10 +60,11 @@ std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value
 
 // Dropout
 
-inline 
-std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Value>>& inputs, double rate, bool training) {
-    if (!training) {
-         
+inline std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Value>> &inputs, double rate, bool training)
+{
+    if (!training)
+    {
+
         return inputs;
     }
 
@@ -68,16 +73,21 @@ std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Va
     std::bernoulli_distribution drop_dist(1.0 - rate);
 
     std::vector<std::shared_ptr<Value>> outputs;
-    for (auto &input : inputs) {
+    for (auto &input : inputs)
+    {
         bool keep = drop_dist(gen);
         double val = keep ? input->data : 0.0;
         auto out = std::make_shared<Value>(val);
         out->add_parent(input);
-        out->_backward = [input, out, keep]() {
+        out->_backward = [input, out, keep]()
+        {
             // If kept, gradient flows as is; if dropped, gradient=0.
-            if (keep) {
+            if (keep)
+            {
                 input->grad += out->grad;
-            } else {
+            }
+            else
+            {
                 input->grad += 0;
             }
         };
@@ -87,19 +97,21 @@ std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Va
 }
 
 // Softmax Activation Function
- 
-inline
-std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared_ptr<Value>>& inputs) {
+
+inline std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared_ptr<Value>> &inputs)
+{
     // sum_exp = sum of exp(input)
     auto sum_exp = std::make_shared<Value>(0.0);
-    for (auto &inp : inputs) {
+    for (auto &inp : inputs)
+    {
         auto e = inp->exp(); // e = exp(inp)
         sum_exp = sum_exp + e;
     }
 
     // each output = exp(input) / sum_exp
     std::vector<std::shared_ptr<Value>> outputs;
-    for (auto &inp : inputs) {
+    for (auto &inp : inputs)
+    {
         auto e = inp->exp();
         auto prob = e / sum_exp;
         outputs.push_back(prob);
@@ -107,27 +119,49 @@ std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared_ptr<Va
     return outputs;
 }
 
- 
-class MLP {
+class MLP
+{
+
+    int _in_features;
+    std::vector<int> _layer_sizes;
+
 public:
     std::vector<std::shared_ptr<Linear>> layers;
 
- 
-    MLP(int in_features, const std::vector<int>& layer_sizes) {
+    int input_size() const
+    {
+
+        return _in_features;
+    }
+    int output_size() const
+    {
+
+        return _layer_sizes.size();
+    }
+
+    MLP(int in_features, const std::vector<int> &layer_sizes)
+    {
+
+        _in_features = in_features;
+        _layer_sizes = layer_sizes;
+
         int current_in = in_features;
-        for (int size : layer_sizes) {
+        for (int size : layer_sizes)
+        {
             layers.push_back(std::make_shared<Linear>(current_in, size));
             current_in = size;
         }
     }
 
-  
-    std::vector<std::shared_ptr<Value>> forward(const std::vector<std::shared_ptr<Value>>& inputs, bool training = true) {
+    std::vector<std::shared_ptr<Value>> forward(const std::vector<std::shared_ptr<Value>> &inputs, bool training = true)
+    {
         auto activations = inputs;
-        for (size_t i = 0; i < layers.size(); ++i) {
+        for (size_t i = 0; i < layers.size(); ++i)
+        {
             activations = layers[i]->forward(activations);
             // For hidden layers, apply ReLU and Dropout
-            if (i < layers.size() - 1) {
+            if (i < layers.size() - 1)
+            {
                 activations = relu(activations);
                 // Removed batch_norm due to complexity.
                 activations = dropout(activations, 0.05, training);
@@ -137,10 +171,11 @@ public:
         return softmax(activations);
     }
 
-   
-    std::vector<std::shared_ptr<Value>> parameters() const {
+    std::vector<std::shared_ptr<Value>> parameters() const
+    {
         std::vector<std::shared_ptr<Value>> params;
-        for (const auto& layer : layers) {
+        for (const auto &layer : layers)
+        {
             auto layer_params = layer->parameters();
             params.insert(params.end(), layer_params.begin(), layer_params.end());
         }
@@ -149,8 +184,3 @@ public:
 };
 
 #endif // MLP_HPP
-
-
-
-
- 
