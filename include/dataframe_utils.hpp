@@ -62,8 +62,7 @@ namespace namespaceCpp
         std::strtod(trimmed.c_str(), &end);
         return end == trimmed.c_str() + trimmed.size();
     }
-
-    void DataFrame::from_csv(const std::string &filename, bool has_header = true, char delimiter = ',')
+    inline void DataFrame::from_csv(const std::string &filename, bool has_header = true, char delimiter = ',')
     {
         std::ifstream file(filename);
         if (!file.is_open())
@@ -141,82 +140,6 @@ namespace namespaceCpp
 
         file.close();
     }
-
-    // inline void DataFrame::from_csv(const std::string &filename, bool has_header, char delimiter)
-    // {
-    //     std::ifstream file(filename);
-    //     if (!file.is_open())
-    //     {
-    //         throw std::runtime_error("Error: Could not open file " + filename);
-    //     }
-
-    //     std::string line;
-    //     std::vector<std::string> column_names;
-    //     bool first_row = true;
-    //     size_t row_index = 0;
-
-    //     while (std::getline(file, line))
-    //     {
-    //         std::stringstream ss(line);
-    //         std::string cell;
-    //         std::vector<std::string> row;
-
-    //         // Split the line by the delimiter
-    //         while (std::getline(ss, cell, delimiter))
-    //         {
-    //             row.push_back(cell);
-    //         }
-
-    //         if (first_row && has_header)
-    //         {
-    //             // Treat the first row as column names
-    //             for (const auto &col_name : row)
-    //             {
-    //                 column_names.push_back(clean_colname(col_name));
-    //                 columns[clean_colname(col_name)] = Column();
-    //                 column_types[clean_colname(col_name)] = std::nullopt;
-    //             }
-    //             first_row = false;
-    //         }
-    //         else
-    //         {
-    //             // If no header, create default column names
-    //             if (first_row && !has_header)
-    //             {
-    //                 for (size_t i = 0; i < row.size(); ++i)
-    //                 {
-    //                     std::string col_name = "col" + std::to_string(i);
-    //                     column_names.push_back(col_name);
-    //                     columns[col_name] = Column();
-    //                     column_types[col_name] = std::nullopt;
-    //                 }
-    //                 first_row = false;
-    //             }
-
-    //             // Populate columns with data
-    //             for (size_t i = 0; i < row.size(); ++i)
-    //             {
-    //                 const std::string &col_name = column_names[i];
-    //                 std::string cell_value = trim(row[i]);
-
-    //                 // Determine if the cell can be converted to a double
-    //                 try
-    //                 {
-    //                     double num_value = std::stod(cell_value);
-    //                     add_value_at(col_name, row_index, num_value);
-    //                 }
-    //                 catch (const std::invalid_argument &)
-    //                 {
-    //                     // If not, store it as a string
-    //                     add_value_at(col_name, row_index, cell_value);
-    //                 }
-    //             }
-    //             ++row_index;
-    //         }
-    //     }
-
-    //     file.close();
-    // }
 
     // namespace
 }

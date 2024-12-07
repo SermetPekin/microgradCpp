@@ -52,8 +52,9 @@ namespace namespaceCpp
 
     class DataFrame;
 
-    void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter = std::nullopt);
-    using Cell = std::variant<std::monostate, double, long long, int, std::string>;
+    inline void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter = std::nullopt);
+
+    using Cell = std::variant<std::monostate, double, long long, std::string>;
 
     using Column = std::vector<Cell>;
 
@@ -402,9 +403,9 @@ namespace namespaceCpp
             const std::string file_name_(file_name);
             save_as_csv(*this, file_name_, delimiter);
         }
-    };
+    }; // class
 
-    void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter)
+    inline void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter)
     {
         static std::string NaNstr("");
         std::cout << "[saving csv] " << filename << "\n";
