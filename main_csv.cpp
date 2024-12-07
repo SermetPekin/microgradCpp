@@ -5,6 +5,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
+
+#include "types.hpp"
+
+using namespace microgradCpp;
+
 /*
 g++ -std=c++17 -Iinclude -O2 -o main main_csv.cpp
 
@@ -16,10 +21,11 @@ int main()
     {
         // Example: Load a CSV file, skipping the first line if it's a header
         vv_string data = CSVLoader::load_csv("./data/iris.csv", true);
+        // vv_double data = CSVLoader::load_csv("./data/iris.csv", true);
 
         for (const auto &row : data)
         {
-            for (const double &cell : row)
+            for (const auto &cell : row)
             {
                 std::cout << cell << " ";
             }
