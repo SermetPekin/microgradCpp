@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include "value.hpp"
 #include "iris.hpp"
+#include "data_utils.hpp"
 
 #include "easy.hpp"
 

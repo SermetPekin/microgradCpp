@@ -7,10 +7,18 @@
 
 using namespace microgradCpp;
 
+/*
+
+g++ -g -o main main.cpp
+
+g++ -g -std=c++17 -Iinclude -O2 -o main main.cpp
+
+*/
+
 int main()
 {
 
-    DatasetType dataset = get_iris();
+    DatasetType dataset = get_iris2();
 
     shuffle(dataset);
 
@@ -30,6 +38,14 @@ int main()
     SGD optimizer(0.01);
 
     int epochs = 100;
+
+    int x = 0;
+    std::cout << "Epoch: " << epochs << ", Sample: " << x << std::endl;
+
+    // Validate input size
+    std::cout << "Input size: " << train_inputs[x].size() << std::endl;
+    std::cout << "Target size: " << train_targets[x].size() << std::endl;
+
     for (int epoch = 0; epoch < epochs; ++epoch)
     {
         double total_loss = 0.0;
@@ -37,6 +53,7 @@ int main()
         // Training loop
         for (size_t i = 0; i < train_inputs.size(); ++i)
         {
+
             // Forward pass (training=true to possibly enable dropout or other training-specific behavior in MLP)
             auto predictions = model.forward(train_inputs[i], true);
 

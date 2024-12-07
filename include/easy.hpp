@@ -33,15 +33,36 @@ THE SOFTWARE.
 #include <random>
 #include <utility>
 
-// #include "micrograd.hpp" 
+// #include "micrograd.hpp"
 #include "types.hpp"
 #include "loss.hpp"
 #include "mlp.hpp"
 #include "sgd.hpp"
+#include "dataprocessor.hpp"
+#include "datasetType.hpp"
 
+#include "types.hpp"
 using namespace microgradCpp;
-inline
-DatasetType get_iris()
+
+inline DatasetType get_iris2() // ok
+{
+    DataProcessor processor;
+
+    vv_string data2 = processor.load_and_process("./data/iris.csv", true);
+
+    vv_double converted_data2 = processor.convert_to_double_with_encoding_(data2);
+
+    DatasetType dataset = convert_to_dataset(converted_data2);
+
+    return dataset;
+}
+
+inline DatasetType get_iris() // ok
+{
+    return get_iris2();
+}
+
+inline DatasetType get_iris1() // problem
 {
     // Load Iris dataset
     std::vector<std::vector<std::shared_ptr<Value>>> inputs;
@@ -57,22 +78,20 @@ DatasetType get_iris()
     }
     return dataset;
 }
-inline
-void shuffle(DatasetType &dataset)
+inline void shuffle(DatasetType &dataset)
 {
     std::random_device rd;
     std::mt19937 gen(rd());
     gen.seed(42); // A fixed seed for reproducibility
     std::shuffle(dataset.begin(), dataset.end(), gen);
 }
-inline
-void train_test_split(
-      const DatasetType &dataset,
-      double TRAIN_SIZE,
-      ColRows &train_inputs,
-      ColRows &train_targets,
-      ColRows &test_inputs,
-      ColRows &test_targets)
+inline void train_test_split(
+    const DatasetType &dataset,
+    double TRAIN_SIZE,
+    ColRows &train_inputs,
+    ColRows &train_targets,
+    ColRows &test_inputs,
+    ColRows &test_targets)
 {
 
     size_t train_size = static_cast<size_t>(dataset.size() * TRAIN_SIZE);
@@ -88,9 +107,8 @@ void train_test_split(
         test_targets.push_back(dataset[i].second);
     }
 }
- 
-inline
-void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
+
+inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model, double lr = 0.01, int epochs = 100)
 {
 
     // Split into train and test sets (80-20 split)
@@ -164,7 +182,5 @@ void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, dou
         }
     }
 }
-
-
 
 #endif // EASY_HPP
