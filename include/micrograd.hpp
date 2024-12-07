@@ -33,12 +33,12 @@ THE SOFTWARE.
 #include "easy.hpp"
 
 #include "linear.hpp"
-//#include "dataset.hpp"
+// #include "dataset.hpp"
 #include "loss.hpp"
 #include "csv.hpp"
 #include "column.hpp"
 #include "csv_table.hpp"
 #include "mlp.hpp"
 #include "sgd.hpp"
-
+#include "console_utils.hpp"
 #endif // MICROGRADCPP_HPP

@@ -138,6 +138,11 @@ public:
 
         return _layer_sizes.size();
     }
+    std::vector<int> get_layer_sizes() const
+    {
+
+        return _layer_sizes;
+    }
 
     MLP(int in_features, const std::vector<int> &layer_sizes)
     {

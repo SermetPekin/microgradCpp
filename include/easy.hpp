@@ -40,6 +40,7 @@ THE SOFTWARE.
 #include "sgd.hpp"
 #include "dataprocessor.hpp"
 #include "datasetType.hpp"
+#include "console_utils.hpp"
 
 #include "types.hpp"
 using namespace microgradCpp;
@@ -108,6 +109,7 @@ inline void train_test_split(
     }
 }
 
+
 inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model, double lr = 0.01, int epochs = 100)
 {
 
@@ -119,6 +121,13 @@ inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model
 
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(lr);
+
+    // Validate dataset and model
+    if (!validate_dataset_and_model(dataset, model, TRAIN_SIZE))
+    {
+
+        epic_failure_exit("data set validation failed...");
+    }
 
     // int epochs = 100;
     for (int epoch = 0; epoch < epochs; ++epoch)
