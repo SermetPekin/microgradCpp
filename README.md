@@ -31,7 +31,7 @@ This project aims to be easy to read and modify, making it a great learning tool
 
 ```C++ 
     // main.cpp 
-    
+
 #include "micrograd.hpp"
 using namespace microgradCpp;
 
@@ -41,10 +41,12 @@ int main()
     DatasetType dataset = get_iris();
     shuffle(dataset);
     double TRAIN_SIZE{0.8};
-    
-    // Create MLP model
-    // Input: 4 features, hidden layers: [7,7], output: 3 classes
+
     // Define the model and hyperparameters
+
+    // Create Multi-Layer Perceptron (MLP)
+    // Input: 4 features, hidden layers: [10,10], output: 3 classes
+  
     MLP model(4, {10, 10, 3});
     double learning_rate = 0.01;
     int epochs = 100;
