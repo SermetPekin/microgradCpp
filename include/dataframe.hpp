@@ -53,7 +53,7 @@ namespace namespaceCpp
     class DataFrame;
 
     void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter = std::nullopt);
-    using Cell = std::variant<std::monostate, double, long long, std::string>;
+    using Cell = std::variant<std::monostate, double, long long, int, std::string>;
 
     using Column = std::vector<Cell>;
 
@@ -225,30 +225,32 @@ namespace namespaceCpp
         void print() const
         {
             rocking_star_print();
+        }
+        void printOld() const
+        {
+            for (const auto &[column_name, data] : columns)
+            {
+                std::cout << column_name << ": \n";
+                std::cout << divider();
 
-            // for (const auto &[column_name, data] : columns)
-            // {
-            //     std::cout << column_name << ": \n";
-            //     std::cout << divider();
+                for (const auto &cell : data)
+                {
+                    std::visit([](const auto &v)
+                               {
+                        using T = std::decay_t<decltype(v)>;
+                        if constexpr (std::is_same_v<T, std::monostate>)
+                        {
+                            std::cout << "NaN" << " ";
+                        }
+                        else
+                        {
+                            std::cout << v << " ";
+                        } }, cell);
+                }
 
-            //     for (const auto &cell : data)
-            //     {
-            //         std::visit([](const auto &v)
-            //                    {
-            //             using T = std::decay_t<decltype(v)>;
-            //             if constexpr (std::is_same_v<T, std::monostate>)
-            //             {
-            //                 std::cout << "NaN" << " ";
-            //             }
-            //             else
-            //             {
-            //                 std::cout << v << " ";
-            //             } }, cell);
-            //     }
-
-            //     std::cout << "\n"
-            //               << divider() << "\n";
-            // }
+                std::cout << "\n"
+                          << divider() << "\n";
+            }
         }
 
         void encode_column(const std::string &column_name)
@@ -290,50 +292,6 @@ namespace namespaceCpp
             column_types[column_name] = typeid(double);
         }
 
-        // // Encode a column's string values to numerical indices
-        // void encode_column(const std::string &column_name)
-        // {
-        //     if (columns.find(column_name) == columns.end())
-        //     {
-        //         throw std::invalid_argument("Column not found: " + column_name);
-        //     }
-
-        //     Column &col = columns[column_name];
-
-        //     // Create a set of unique string values
-        //     std::set<std::string> unique_values;
-        //     for (const auto &cell : col)
-        //     {
-        //         if (std::holds_alternative<std::string>(cell))
-        //         {
-        //             unique_values.insert(std::get<std::string>(cell));
-        //         }
-        //     }
-
-        //     // Create a mapping from string to numerical indices
-        //     std::unordered_map<std::string, int> encoding_map;
-        //     int index = 0;
-        //     for (const auto &value : unique_values)
-        //     {
-        //         encoding_map[value] = index++;
-        //     }
-
-        //     // Replace the strings with their encoded values
-        //     for (auto &cell : col)
-        //     {
-        //         if (std::holds_alternative<std::string>(cell))
-        //         {
-        //             cell = static_cast<double>(encoding_map[std::get<std::string>(cell)]);
-        //         }
-        //     }
-
-        //     // Store the encoding map for reference
-        //     encoding_mappings[column_name] = encoding_map;
-
-        //     std::cout << "Column '" << column_name << "' encoded successfully.\n";
-        // }
-
-        // Print the encoding map for a given column
         void print_encoding_map(const std::string &column_name) const
         {
             auto it = encoding_mappings.find(column_name);
@@ -350,7 +308,6 @@ namespace namespaceCpp
             }
         }
 
-        // Function to get the type as a string
         std::string get_type_string(const std::string &column_name) const
         {
             auto it = column_types.find(column_name);
