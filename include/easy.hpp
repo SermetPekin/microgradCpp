@@ -33,11 +33,14 @@ THE SOFTWARE.
 #include <random>
 #include <utility>
 
-#include "micrograd.hpp"
+// #include "micrograd.hpp" 
 #include "types.hpp"
+#include "loss.hpp"
+#include "mlp.hpp"
+#include "sgd.hpp"
 
 using namespace microgradCpp;
-
+inline
 DatasetType get_iris()
 {
     // Load Iris dataset
@@ -54,7 +57,7 @@ DatasetType get_iris()
     }
     return dataset;
 }
-
+inline
 void shuffle(DatasetType &dataset)
 {
     std::random_device rd;
@@ -62,9 +65,10 @@ void shuffle(DatasetType &dataset)
     gen.seed(42); // A fixed seed for reproducibility
     std::shuffle(dataset.begin(), dataset.end(), gen);
 }
+inline
 void train_test_split(
-    const DatasetType &dataset,
-    double TRAIN_SIZE,
+      const DatasetType &dataset,
+      double TRAIN_SIZE,
       ColRows &train_inputs,
       ColRows &train_targets,
       ColRows &test_inputs,
@@ -85,6 +89,7 @@ void train_test_split(
     }
 }
  
+inline
 void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
 {
 

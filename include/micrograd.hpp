@@ -27,6 +27,10 @@ THE SOFTWARE.
 #include "exceptions.hpp"
 
 #include "value.hpp"
+#include "iris.hpp"
+
+#include "easy.hpp"
+
 #include "linear.hpp"
 //#include "dataset.hpp"
 #include "loss.hpp"
@@ -35,7 +39,5 @@ THE SOFTWARE.
 #include "csv_table.hpp"
 #include "mlp.hpp"
 #include "sgd.hpp"
-#include "iris.hpp"
-#include "easy.hpp"
 
 #endif // MICROGRADCPP_HPP

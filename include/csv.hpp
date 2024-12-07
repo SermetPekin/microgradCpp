@@ -23,8 +23,8 @@ THE SOFTWARE.
 */
 
 
-#ifndef CSV_LOADER_HPP
-#define CSV_LOADER_HPP
+#ifndef CSV_L_HPP
+#define CSV_L_HPP
 
 #include <string>
 #include <vector>
@@ -133,4 +133,4 @@ private:
     }
 };
 
-#endif // CSV_LOADER_HPP
+#endif // CSV_L_HPP
