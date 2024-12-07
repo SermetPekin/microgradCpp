@@ -45,11 +45,11 @@ public:
     std::function<void()> _backward; // Backward function for autograd
 
     // Constructor
-    constexpr Value(double data, const std::string &label = "")
+      Value(double data, const std::string &label = "")
         : data(data), grad(0.0), label(label), _backward([]() {}) {}
 
     // Copy constructor
-    constexpr Value(const Value &other)
+      Value(const Value &other)
         : data(other.data), grad(other.grad), label(other.label), parents(other.parents), _backward(other._backward) {}
 
     // Add a parent to the computational graph (ensuring no duplicates)
