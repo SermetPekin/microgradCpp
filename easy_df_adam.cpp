@@ -33,7 +33,7 @@ int main()
 
 
     auto params = model.parameters();
-    double learning_rate = 0.001;
+    double learning_rate = 0.01;
     int epochs = 100;
 
 

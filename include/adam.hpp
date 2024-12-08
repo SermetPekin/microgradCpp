@@ -6,18 +6,44 @@
 #include <memory>
 #include <cmath>
 
-class AdamOptimizer {
+class AdamOptimizer
+{
+    /*
+    arXiv preprint arXiv:1412.6980 , Diederik P Kingma, Jimmy Ba
+
+        Adam maintains two moving averages for each parameter:
+
+        First Moment Estimate (Mean):
+        mt=β1mt−1+(1−β1)gtmt​=β1​mt−1​+(1−β1​)gt​
+
+        Second Moment Estimate (Uncentered Variance):
+        vt=β2vt−1+(1−β2)gt2vt​=β2​vt−1​+(1−β2​)gt2​
+
+    It then corrects these biases and updates the parameters with:
+    θt=θt−1−η⋅m^tv^t+ϵ
+    θt​=θt−1​−v^t​
+    ​+ϵη⋅m^t​​
+
+    Where:
+
+        gtgt​: Gradient at time tt
+        ηη: Learning rate
+        β1,β2β1​,β2​: Exponential decay rates
+        ϵϵ: Smoothing term (prevents division by zero)
+
+
+    */
 public:
-    double lr;         // Learning rate
-    double beta1;      // Exponential decay rate for the first moment
-    double beta2;      // Exponential decay rate for the second moment
-    double epsilon;    // Small constant for numerical stability
-    int t;             // Time step (iteration count)
+    double lr;      // Learning rate
+    double beta1;   // Exponential decay rate for the first moment
+    double beta2;   // Exponential decay rate for the second moment
+    double epsilon; // Small constant for numerical stability
+    int t;          // Time step (iteration count)
 
     // For storing moments for each parameter
     std::vector<std::shared_ptr<Value>> params;
-    std::unordered_map<Value*, double> m; // First moment estimates
-    std::unordered_map<Value*, double> v; // Second moment estimates
+    std::unordered_map<Value *, double> m; // First moment estimates
+    std::unordered_map<Value *, double> v; // Second moment estimates
 
     // Constructor
     AdamOptimizer(std::vector<std::shared_ptr<Value>> parameters,
@@ -25,17 +51,21 @@ public:
                   double beta1 = 0.9,
                   double beta2 = 0.999,
                   double epsilon = 1e-8)
-        : lr(lr), beta1(beta1), beta2(beta2), epsilon(epsilon), t(0), params(parameters) {
-        for (auto& param : params) {
+        : lr(lr), beta1(beta1), beta2(beta2), epsilon(epsilon), t(0), params(parameters)
+    {
+        for (auto &param : params)
+        {
             m[param.get()] = 0.0;
             v[param.get()] = 0.0;
         }
     }
 
     // Step function to update parameters
-    void step() {
+    void step()
+    {
         t++; // Increment time step
-        for (auto& param : params) {
+        for (auto &param : params)
+        {
             double g = param->grad; // Gradient of the parameter
 
             // Update first moment estimate (mean)
@@ -54,8 +84,10 @@ public:
     }
 
     // Zero gradients for the next step
-    void zero_grad() {
-        for (auto& param : params) {
+    void zero_grad()
+    {
+        for (auto &param : params)
+        {
             param->grad = 0.0;
         }
     }
