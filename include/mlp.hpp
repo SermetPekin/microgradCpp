@@ -31,19 +31,22 @@ THE SOFTWARE.
 #include <random>
 #include <iostream>
 
-
-std::vector<std::shared_ptr<Value>> leaky_relu(const std::vector<std::shared_ptr<Value>>& inputs) {
+inline std::vector<std::shared_ptr<Value>> leaky_relu(const std::vector<std::shared_ptr<Value>> &inputs)
+{
     std::vector<std::shared_ptr<Value>> outputs;
-    for (const auto& val : inputs) {
-        if (val->data > 0) {
+    for (const auto &val : inputs)
+    {
+        if (val->data > 0)
+        {
             outputs.push_back(val);
-        } else {
-            outputs.push_back(std::make_shared<Value>(0.01 * val->data));  // Small negative slope
+        }
+        else
+        {
+            outputs.push_back(std::make_shared<Value>(0.01 * val->data)); // Small negative slope
         }
     }
     return outputs;
 }
-
 
 // ReLU Act. Func.
 
