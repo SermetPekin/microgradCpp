@@ -49,8 +49,15 @@
 #include <typeinfo>
 
 #include "dataframe.hpp"
-namespace namespaceCpp
+namespace microgradCpp
 {
+
+    static inline std::string trim(const std::string &str)
+    {
+        auto start = str.find_first_not_of(" \t");
+        auto end = str.find_last_not_of(" \t");
+        return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
+    }
 
     inline bool is_numeric(const std::string &str)
     {
@@ -62,7 +69,81 @@ namespace namespaceCpp
         std::strtod(trimmed.c_str(), &end);
         return end == trimmed.c_str() + trimmed.size();
     }
-    inline void DataFrame::from_csv(const std::string &filename, bool has_header = true, char delimiter = ',')
+
+    inline void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter)
+    {
+        static std::string NaNstr("");
+        std::cout << "[saving csv] " << filename << "\n";
+        std::ofstream file(filename);
+
+        if (!file.is_open())
+        {
+            std::cerr << "Error opening file: " << filename << std::endl;
+            return;
+        }
+
+        char actual_delimiter = delimiter.value_or(',');
+
+        auto column_names = df.get_column_names();
+        size_t max_num_rows = 0;
+
+        for (const auto &col_name : column_names)
+        {
+            auto col_data = df.columns.at(col_name);
+            max_num_rows = std::max(max_num_rows, col_data.size());
+        }
+
+        // Write headers
+        for (size_t col = 0; col < column_names.size(); ++col)
+        {
+            file << column_names[col];
+            if (col < column_names.size() - 1)
+                file << actual_delimiter;
+        }
+        file << "\n";
+
+        // Write data
+        for (size_t row = 0; row < max_num_rows; ++row)
+        {
+            for (size_t col = 0; col < column_names.size(); ++col)
+            {
+                const auto &col_name = column_names[col];
+                const auto &col_data = df.columns.at(col_name);
+
+                if (row < col_data.size())
+                {
+                    const auto &cell = col_data[row];
+
+                    std::visit([&](const auto &value)
+                               {
+                    using T = std::decay_t<decltype(value)>;
+                    if constexpr (std::is_same_v<T, std::monostate>) {
+                        file << NaNstr ;
+                    } else if constexpr (std::is_same_v<T, double>) {
+                        if (std::isnan(value))
+                            file << NaNstr ;
+                        else
+                            file << value;
+                    } else {
+                        file << value;
+                    } }, cell);
+                }
+                else
+                {
+                    file << NaNstr;
+                }
+
+                if (col < column_names.size() - 1)
+                    file << actual_delimiter;
+            }
+            file << "\n";
+        }
+
+        file.close();
+        std::cout << "CSV file saved as: " << filename << std::endl;
+    }
+
+    inline void DataFrame::from_csv(const std::string &filename, bool has_header, char delimiter) // = true, ','
     {
         std::ifstream file(filename);
         if (!file.is_open())
@@ -88,8 +169,11 @@ namespace namespaceCpp
             if (is_first_line && has_header)
             {
                 column_names = cells;
-                for (const auto &col : column_names)
+                for (auto &col : column_names)
                 {
+
+                    col = trim(col);  // TODO 
+                    
                     columns[col] = Column();
                     column_types[col] = std::nullopt; // Initialize types as unknown
                 }

@@ -25,6 +25,10 @@ THE SOFTWARE.
 */
 
 #include "exceptions.hpp"
+#include "header.hpp"
+#include "series.hpp"
+#include "dataframe.hpp"
+#include "dataframe_utils.hpp"
 
 #include "value.hpp"
 #include "iris.hpp"
@@ -41,6 +45,5 @@ THE SOFTWARE.
 #include "mlp.hpp"
 #include "sgd.hpp"
 #include "console_utils.hpp"
-#include "dataframe.hpp"
-#include "dataframe_utils.hpp"
+
 #endif // MICROGRADCPP_HPP

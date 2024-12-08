@@ -15,4 +15,9 @@ ignore*.*
 ig_*.*
 ig_*/
 
+
+*.csv 
+
+!data/*.csv
+
 main.dSYM/
