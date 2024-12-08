@@ -12,5 +12,7 @@ ignore*.*
 *.o
 *.a
 
+ig_*.*
+ig_*/
 
 main.dSYM/
