@@ -12,6 +12,8 @@
 #include "datasetType.hpp"
 #include "value.hpp"
 #include "mlp.hpp"
+#include "adam.hpp"
+#include "easy.hpp"
 
 using namespace microgradCpp;
 
@@ -52,8 +54,7 @@ inline void shuffleLocal(DatasetType &dataset)
 }
 
 // The updated train_eval function
-inline void train_test_split(
-    const DataFrame &df,
+inline void train_test_split(    const DataFrame &df,
     double TRAIN_SIZE,
     ColRows &train_inputs,
     ColRows &train_targets,
@@ -120,8 +121,163 @@ inline void print(const ColRows &colrows)
 //     return target;
 // }
 
+inline void train_eval(DatasetType &dataset, double TRAIN_SIZE, MLP &model, AdamOptimizer &optimizer, int epochs = 100)
+{
+
+    // Split into train and test sets (80-20 split)
+    ColRows train_inputs, train_targets;
+    ColRows test_inputs, test_targets;
+
+    train_test_split(dataset, TRAIN_SIZE, train_inputs, train_targets, test_inputs, test_targets);
+
+    // Create SGD optimizer with a learning rate of 0.005
+    // SGD optimizer(lr);
+
+    double best_loss = std::numeric_limits<double>::infinity();
+    int patience = 150, patience_counter = 0;
+
+    // int epochs = 100;
+    for (int epoch = 0; epoch < epochs; ++epoch)
+    {
+        double total_loss = 0.0;
+
+        // Training loop
+        for (size_t i = 0; i < train_inputs.size(); ++i)
+        {
+            // Forward pass (training=true to possibly enable dropout or other training-specific behavior in MLP)
+            auto predictions = model.forward(train_inputs[i], true);
+
+            // Compute Cross-Entropy Loss
+            auto loss = Loss::cross_entropy(predictions, train_targets[i]);
+            total_loss += loss->data;
+
+            // Backpropagation
+            optimizer.zero_grad();
+            loss->backward();
+
+            // Update weights
+            optimizer.step();
+        }
+
+       // std::cout << "Epoch " << epoch + 1 << "/" << epochs << ", Loss: " << total_loss / train_inputs.size() << std::endl;
+
+        // Evaluate test accuracy every 10 epochs and on the last epoch
+        if (epoch % 10 == 0 || epoch == epochs - 1)
+        {
+            int correct = 0;
+            for (size_t i = 0; i < test_inputs.size(); ++i)
+            {
+                // Forward pass in evaluation mode (e.g., no dropout)
+                auto predictions = model.forward(test_inputs[i], false);
+
+                // Find predicted class (the index with max value)
+                int predicted_class = 0;
+                double max_value = predictions[0]->data;
+                for (size_t j = 1; j < predictions.size(); ++j)
+                {
+                    if (predictions[j]->data > max_value)
+                    {
+                        max_value = predictions[j]->data;
+                        predicted_class = static_cast<int>(j);
+                    }
+                }
+
+                // Check if prediction matches the target
+                for (size_t j = 0; j < test_targets[i].size(); ++j)
+                {
+                    if (test_targets[i][j]->data == 1.0 && j == predicted_class)
+                    {
+                        correct++;
+                        break;
+                    }
+                }
+            }
+
+            double accuracy = static_cast<double>(correct) / test_inputs.size();
+            std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
+        }
+    }
+}
+
+inline void train_eval(DataFrame &df, double TRAIN_SIZE, MLP &model, AdamOptimizer &optimizer, int epochs = 100)
+{
+
+    ColRows train_inputs, train_targets;
+    ColRows test_inputs, test_targets;
+
+    train_test_split(df, TRAIN_SIZE, train_inputs, train_targets, test_inputs, test_targets);
+
+    // Create SGD optimizer
+    // SGD optimizer(lr);
+
+    double best_loss = std::numeric_limits<double>::infinity();
+    int patience = 150, patience_counter = 0;
+
+    // int epochs = 100;
+    for (int epoch = 0; epoch < epochs; ++epoch)
+    {
+        double total_loss = 0.0;
+
+        // Training loop
+        for (size_t i = 0; i < train_inputs.size(); ++i)
+        {
+            // Forward pass (training=true to possibly enable dropout or other training-specific behavior in MLP)
+            auto predictions = model.forward(train_inputs[i], true);
+
+            // Compute Cross-Entropy Loss
+            auto loss = Loss::cross_entropy(predictions, train_targets[i]);
+            total_loss += loss->data;
+
+            // Backpropagation
+            optimizer.zero_grad();
+            loss->backward();
+
+            // Update weights
+            optimizer.step();
+        }
+
+      //  std::cout << "Epoch " << epoch + 1 << "/" << epochs << ", Loss: " << total_loss / train_inputs.size() << std::endl;
+
+        // Evaluate test accuracy every 10 epochs and on the last epoch
+        if (epoch % 10 == 0 || epoch == epochs - 1)
+        {
+            int correct = 0;
+            for (size_t i = 0; i < test_inputs.size(); ++i)
+            {
+                // Forward pass in evaluation mode (e.g., no dropout)
+                auto predictions = model.forward(test_inputs[i], false);
+
+                // Find predicted class (the index with max value)
+                int predicted_class = 0;
+                double max_value = predictions[0]->data;
+                for (size_t j = 1; j < predictions.size(); ++j)
+                {
+                    if (predictions[j]->data > max_value)
+                    {
+                        max_value = predictions[j]->data;
+                        predicted_class = static_cast<int>(j);
+                    }
+                }
+
+                // Check if prediction matches the target
+                for (size_t j = 0; j < test_targets[i].size(); ++j)
+                {
+                    if (test_targets[i][j]->data == 1.0 && j == predicted_class)
+                    {
+                        correct++;
+                        break;
+                    }
+                }
+            }
+
+            double accuracy = static_cast<double>(correct) / test_inputs.size();
+            std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
+        }
+    }
+}
+
 /*========================      train_eval DataFrame      =================================================*/
-inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr = 0.01, int epochs = 100)
+inline void train_eval(const DataFrame &df, double train_size, MLP &model, double lr = 0.01, int epochs = 100)
 {
 
     ColRows train_inputs, train_targets;
@@ -186,8 +342,6 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
                 //     correct++;
                 // }
 
-             
-
                 if (predicted_class >= 0 && predicted_class < test_targets[i].size())
                 {
                     // if (test_targets[i][predicted_class]->data == 1.0)
@@ -195,12 +349,11 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
                     //     correct++;
                     // }
 
-                       constexpr double EPSILON = 1e-6;
-                if (std::abs(test_targets[i][predicted_class]->data - 1.0) < EPSILON)
-                {
-                    correct++;
-                }
-
+                    constexpr double EPSILON = 1e-6;
+                    if (std::abs(test_targets[i][predicted_class]->data - 1.0) < EPSILON)
+                    {
+                        correct++;
+                    }
                 }
             }
 

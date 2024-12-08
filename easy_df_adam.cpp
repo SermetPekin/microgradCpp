@@ -12,10 +12,8 @@ int main()
 
     DataFrame df;
     df.from_csv("./data/iris.csv");
-   df.normalize();
+    df.normalize();
     df.encode_column("variety");
- 
-
 
     df.print();
     df.shuffle();
@@ -32,22 +30,29 @@ int main()
     // Define the model and hyperparameters
     // MLP model(4, {10, 10, 3});
     MLP model(4, {16, 16, 3});
+
+
+    auto params = model.parameters();
     double learning_rate = 0.001;
-    int epochs = 300;
+    int epochs = 100;
+
+
+    // Initialize Adam optimizer
+    AdamOptimizer optimizer(params, learning_rate);
+
     // Train and evaluate the model
-    train_eval(df, TRAIN_SIZE, model, learning_rate, epochs);
+    // train_eval(dataset, TRAIN_SIZE, model, learning_rate, epochs);
+    // train_eval(dataset, TRAIN_SIZE, model, optimizer, epochs);
+
+    // Train and evaluate the model
+    train_eval(df, TRAIN_SIZE, model, optimizer, epochs);
 
     return 0;
 }
 /*
 
-   // Initialize Adam optimizer
-    AdamOptimizer optimizer(params, learning_rate);
 
-    // Train and evaluate the model
-    // train_eval(dataset, TRAIN_SIZE, model, learning_rate, epochs);
-    train_eval(dataset, TRAIN_SIZE, model, optimizer, epochs);
-    
+
     */
 /*
 Notes

@@ -38,6 +38,7 @@ THE SOFTWARE.
 #include "types.hpp"
 #include "loss.hpp"
 #include "mlp.hpp"
+#include "iris.hpp"
 #include "sgd.hpp"
 #include "dataprocessor.hpp"
 #include "datasetType.hpp"
@@ -88,8 +89,7 @@ inline void shuffle(DatasetType &dataset)
     gen.seed(42); // A fixed seed for reproducibility
     std::shuffle(dataset.begin(), dataset.end(), gen);
 }
-inline void train_test_split(
-    const DatasetType &dataset,
+inline void train_test_split(       DatasetType &dataset,
     double TRAIN_SIZE,
     ColRows &train_inputs,
     ColRows &train_targets,
@@ -112,7 +112,7 @@ inline void train_test_split(
 }
  
 inline
-void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
+void train_eval( DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
 {
 
     // Split into train and test sets (80-20 split)
