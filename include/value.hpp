@@ -1,6 +1,5 @@
 #ifndef VALUE_HPP
 #define VALUE_HPP
-
 /*
 MIT License
 
@@ -41,16 +40,26 @@ public:
     double data;       // Scalar value
     double grad;       // Gradient value
     std::string label; // Optional label for debugging
+    bool cache_topology;
     std::vector<std::shared_ptr<Value>> parents;
     std::function<void()> _backward; // Backward function for autograd
 
+    mutable std::vector<std::shared_ptr<Value>> topo_cache;
+    mutable bool topo_cached = false;
+
     // Constructor
-    Value(double data, const std::string &label = "")
-        : data(data), grad(0.0), label(label), _backward([]() {}) {}
+    Value(double data, const std::string &label = "", bool cache_topology = true )
+        : data(data),
+          grad(0.0),
+          label(label),
+          _backward([]() {}),
+          cache_topology(cache_topology) {}
 
     // Copy constructor
     Value(const Value &other)
-        : data(other.data), grad(other.grad), label(other.label), parents(other.parents), _backward(other._backward) {}
+        : data(other.data), grad(other.grad), label(other.label),
+          parents(other.parents), _backward(other._backward),
+          cache_topology(other.cache_topology) {}
 
     // Add a parent to the computational graph (ensuring no duplicates)
     void add_parent(const std::shared_ptr<Value> &parent)
@@ -61,10 +70,15 @@ public:
         }
     }
 
-    // Build topological order for backpropagation
+    // Build topological order for backpropagation (with caching)
     std::vector<std::shared_ptr<Value>> build_topological_order()
     {
-        std::vector<std::shared_ptr<Value>> topo;
+        if (topo_cached and cache_topology)
+        {
+            return topo_cache;
+        }
+
+        topo_cache.clear();
         std::unordered_set<Value *> visited;
 
         std::function<void(Value *)> visit = [&](Value *v)
@@ -76,13 +90,44 @@ public:
                 {
                     visit(p.get());
                 }
-                topo.push_back(v->shared_from_this());
+                topo_cache.push_back(v->shared_from_this());
             }
         };
 
         visit(this);
-        return topo;
+        topo_cached = true;
+        return topo_cache;
     }
+
+    // Method to reset the cache manually (if needed)
+    void reset_topo_cache()
+    {
+        topo_cached = false;
+        topo_cache.clear();
+    }
+
+    // Build topological order for backpropagation
+    // std::vector<std::shared_ptr<Value>> build_topological_order()
+    // {
+    //     std::vector<std::shared_ptr<Value>> topo;
+    //     std::unordered_set<Value *> visited;
+
+    //     std::function<void(Value *)> visit = [&](Value *v)
+    //     {
+    //         if (v && visited.find(v) == visited.end())
+    //         {
+    //             visited.insert(v);
+    //             for (auto &p : v->parents)
+    //             {
+    //                 visit(p.get());
+    //             }
+    //             topo.push_back(v->shared_from_this());
+    //         }
+    //     };
+
+    //     visit(this);
+    //     return topo;
+    // }
 
     // Backward propagation
     void backward(double grad_init = 1.0)

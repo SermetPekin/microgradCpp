@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include <iostream>
 #include <random>
 #include <utility>
+#include <chrono>
 
 // #include "micrograd.hpp"
 #include "types.hpp"
@@ -109,9 +110,9 @@ inline void train_test_split(
         test_targets.push_back(dataset[i].second);
     }
 }
-
-
-inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model, double lr = 0.01, int epochs = 100)
+ 
+inline
+void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
 {
 
     // Split into train and test sets (80-20 split)
@@ -122,13 +123,6 @@ inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model
 
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(lr);
-
-    // Validate dataset and model
-    if (!validate_dataset_and_model(dataset, model, TRAIN_SIZE))
-    {
-
-        epic_failure_exit("data set validation failed...");
-    }
 
     // int epochs = 100;
     for (int epoch = 0; epoch < epochs; ++epoch)
@@ -189,6 +183,13 @@ inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model
 
             double accuracy = static_cast<double>(correct) / test_inputs.size();
             std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
+
+            if (epoch == epochs - 1)
+            {
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                std::cout << "Duration: " << duration.count() << " seconds" << std::endl;
+            }
         }
     }
 }
