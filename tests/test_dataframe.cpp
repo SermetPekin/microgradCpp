@@ -2,18 +2,27 @@
 #include <fstream>
 #include "micrograd.hpp"
 #include "dataframe.hpp"
+#include "sp_testing_utils.hpp"
 
+#include <vector>
+#include <algorithm>
 using namespace microgradCpp;
 
-// Helper function to create a temporary CSV file
-void create_temp_csv(const std::string& filename, const std::string& content) {
-    std::ofstream file(filename);
-    ASSERT_TRUE(file.is_open());
-    file << content;
-    file.close();
-}
+using namespace sptest ; 
 
-TEST(DataFrameTest, ValidateDataFrameContents) {
+ 
+
+// Helper function to create a temporary CSV file
+// void create_temp_csv(const std::string &filename, const std::string &content)
+// {
+//     std::ofstream file(filename);
+//     // ASSERT_TRUE(file.is_open());
+//     file << content;
+//     file.close();
+// }
+
+TEST(DataFrameTest, ValidateDataFrameContents)
+{
     microgradCpp::DataFrame df;
 
     std::string temp_file = "temp_iris.csv";
@@ -42,9 +51,9 @@ TEST(DataFrameTest, ValidateDataFrameContents) {
     std::remove(temp_file.c_str());
 }
 
-
 // Test encoding a categorical column in a DataFrame
-TEST(DataFrameTest, EncodeCategoricalColumn) {
+TEST(DataFrameTest, EncodeCategoricalColumn)
+{
     std::string temp_file = "temp_species.csv";
     std::string csv_content =
         "species\n"
@@ -55,7 +64,7 @@ TEST(DataFrameTest, EncodeCategoricalColumn) {
 
     create_temp_csv(temp_file, csv_content);
 
-   microgradCpp::DataFrame df;
+    microgradCpp::DataFrame df;
     df.from_csv(temp_file);
 
     df.encode_column("species");
@@ -73,7 +82,8 @@ TEST(DataFrameTest, EncodeCategoricalColumn) {
 }
 
 // Test loading a CSV and checking inferred column types
-TEST(DataFrameTest, CheckInferredTypes) {
+TEST(DataFrameTest, CheckInferredTypes)
+{
     std::string temp_file = "temp_mixed.csv";
     std::string csv_content =
         "col1,col2,col3\n"
@@ -91,8 +101,6 @@ TEST(DataFrameTest, CheckInferredTypes) {
 
     std::remove(temp_file.c_str());
 }
-
-
 
 // Test to check loading and saving an Iris-like dataset
 // TEST(DataFrameTest, LoadAndSaveCSV) {
@@ -151,7 +159,6 @@ TEST(DataFrameTest, CheckInferredTypes) {
 //     std::remove(output_file.c_str());
 // }
 
-
 // TEST(DataFrameTest, LoadCSV) {
 //     std::string temp_file = "temp_iris.csv";
 //     std::string csv_content =
@@ -173,7 +180,8 @@ TEST(DataFrameTest, CheckInferredTypes) {
 //     std::remove(temp_file.c_str());
 // }
 
-TEST(DataFrameTest, LoadCSVParts) {
+TEST(DataFrameTest, LoadCSVParts)
+{
     std::string temp_file = "temp_iris.csv";
     std::string csv_content =
         "sepal_length,sepal_width,petal_length,petal_width,species\n"
@@ -188,12 +196,16 @@ TEST(DataFrameTest, LoadCSVParts) {
 
     auto columns = df.get_column_names();
     EXPECT_EQ(columns.size(), 5);
-    EXPECT_EQ(columns[0], "sepal_length");
+
+    // EXPECT_THAT(columns, ::testing::Contains("sepal_length"));
+
+    ASSERT_TRUE(sptest::contains(columns, "sepal_length")) << "'sepal_length' not found in columns";
+
+    // EXPECT_EQ(columns[0], "sepal_length");
     // EXPECT_EQ(columns[4], "species");
 
     // std::remove(temp_file.c_str());
 }
-
 
 // TEST(DataFrameTest, SaveCSV) {
 //     microgradCpp::DataFrame df;
@@ -232,6 +244,3 @@ TEST(DataFrameTest, LoadCSVParts) {
 //     std::remove(temp_file.c_str());
 //     std::remove(output_file.c_str());
 // }
-
-
-

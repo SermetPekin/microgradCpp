@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "series.hpp"
 #include "dataframe.hpp"
 #include "dataframe_utils.hpp"
+#include "sp_testing_utils.hpp"
 
 #include "value.hpp"
 #include "iris.hpp"
