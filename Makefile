@@ -21,7 +21,7 @@ TESTS = $(wildcard tests/test*.cpp)
 TEST_TARGET = test_output
 
 # Compile and run tests with Google Test
-test: $(TEST_TARGET)
+test_only: $(TEST_TARGET)
 	./$(TEST_TARGET) --gtest_fail_fast
 
 $(TEST_TARGET): $(TESTS)
@@ -38,5 +38,8 @@ run: $(TARGET)
 # Clean up build artifacts
 clean:
 	rm -f $(OBJS) $(TARGET) $(TEST_TARGET)
+
+test: clean test_only
+
 
 .PHONY: clean run test
