@@ -25,10 +25,32 @@ THE SOFTWARE.
 */
 
 #include "value.hpp"
+#include "mlp.hpp"
 #include <vector>
 #include <random>
 #include <memory>
 #include <iostream>
+
+inline std::vector<std::shared_ptr<Value>> softmaxLocal(const std::vector<std::shared_ptr<Value>> &inputs)
+{
+    // sum_exp = sum of exp(input)
+    auto sum_exp = std::make_shared<Value>(0.0);
+    for (auto &inp : inputs)
+    {
+        auto e = inp->exp(); // e = exp(inp)
+        sum_exp = sum_exp + e;
+    }
+
+    // each output = exp(input) / sum_exp
+    std::vector<std::shared_ptr<Value>> outputs;
+    for (auto &inp : inputs)
+    {
+        auto e = inp->exp();
+        auto prob = e / sum_exp;
+        outputs.push_back(prob);
+    }
+    return outputs;
+}
 
 class Linear
 {
@@ -50,12 +72,16 @@ public:
             std::vector<std::shared_ptr<Value>> row;
             for (int j = 0; j < in_features; ++j)
             {
-                row.push_back(std::make_shared<Value>(dist(gen), "w"));
+                // row.push_back(std::make_shared<Value>(dist(gen), "w"));
+                row.push_back(std::make_shared<Value>((rand() % 1000) / 1000.0 - 0.5, "w"));
             }
             weights.push_back(row);
+
             biases.push_back(std::make_shared<Value>(dist(gen), "b"));
         }
     }
+
+    //  weights[i] = std::make_shared<Value>((rand() % 1000) / 1000.0 - 0.5);  // Values between -0.5 and 0.5
 
     // Forward pass
     std::vector<std::shared_ptr<Value>> forward(const std::vector<std::shared_ptr<Value>> &inputs)
@@ -84,9 +110,10 @@ public:
             }
             std::cout << std::endl;
     */
-        return outputs;
+        // return outputs;
+        return softmaxLocal(outputs);
     }
-
+    // return softmax(activations);
     // Get all parameters (weights and biases)
     std::vector<std::shared_ptr<Value>> parameters() const
     {

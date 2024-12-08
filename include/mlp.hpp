@@ -31,6 +31,20 @@ THE SOFTWARE.
 #include <random>
 #include <iostream>
 
+
+std::vector<std::shared_ptr<Value>> leaky_relu(const std::vector<std::shared_ptr<Value>>& inputs) {
+    std::vector<std::shared_ptr<Value>> outputs;
+    for (const auto& val : inputs) {
+        if (val->data > 0) {
+            outputs.push_back(val);
+        } else {
+            outputs.push_back(std::make_shared<Value>(0.01 * val->data));  // Small negative slope
+        }
+    }
+    return outputs;
+}
+
+
 // ReLU Act. Func.
 
 inline std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value>> &inputs)
@@ -173,9 +187,10 @@ public:
             // For hidden layers, apply ReLU and Dropout
             if (i < layers.size() - 1)
             {
-                activations = relu(activations);
+                // activations = relu(activations);
+                activations = leaky_relu(activations);
                 // Removed batch_norm due to complexity.
-                activations = dropout(activations, 0.05, training);
+                activations = dropout(activations, 0.20, training);
             }
         }
         // Apply softmax to the final layer's output

@@ -55,6 +55,9 @@
 #include "range.hpp"
 #include "console_utils.hpp"
 #include "types.hpp"
+#include <algorithm> // For std::shuffle
+#include <random>    // For std::default_random_engine
+#include <chrono>    // For seeding the random engine
 
 namespace microgradCpp
 
@@ -150,7 +153,7 @@ namespace microgradCpp
                         }
                         else
                         {
-                            row.push_back(0.0);  
+                            row.push_back(0.0);
                         }
                     }
                 }
@@ -442,6 +445,117 @@ namespace microgradCpp
                               "Unsupported file name type. Must be std::string, const char*, or char array.");
             }
         }
+
+        void shuffle()
+        {
+            if (columns.empty())
+            {
+                throw std::runtime_error("Cannot shuffle an empty DataFrame.");
+            }
+
+            // Get the number of rows
+            size_t num_rows = columns.begin()->second.size();
+
+            // Create a vector of indices representing row positions
+            std::vector<size_t> indices(num_rows);
+            std::iota(indices.begin(), indices.end(), 0);
+
+            // Seed the random number generator
+            unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+            std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
+
+            // Create new columns with shuffled rows
+            std::unordered_map<std::string, Column> shuffled_columns;
+
+            for (const auto &col_name : column_order)
+            {
+                Column &col = columns[col_name];
+                Column shuffled_col;
+
+                for (size_t i : indices)
+                {
+                    shuffled_col.push_back(col[i]);
+                }
+
+                shuffled_columns[col_name] = shuffled_col;
+            }
+
+            // Replace the original columns with shuffled columns
+            columns = shuffled_columns;
+        }
+
+        void normalize()
+        {
+            for (const auto &col_name : column_order)
+            {
+                Column &col = columns[col_name];
+
+                // Step 1: Collect numeric values
+                std::vector<double> numeric_values;
+                for (const auto &cell : col)
+                {
+                    if (std::holds_alternative<double>(cell))
+                    {
+                        numeric_values.push_back(std::get<double>(cell));
+                    }
+                    else if (std::holds_alternative<long long>(cell))
+                    {
+                        numeric_values.push_back(static_cast<double>(std::get<long long>(cell)));
+                    }
+                }
+
+                if (numeric_values.empty())
+                {
+                    std::cout << "Skipping non-numeric column: " << col_name << std::endl;
+                    continue; // Skip non-numeric columns
+                }
+
+                // Step 2: Calculate mean and standard deviation
+                double mean = std::accumulate(numeric_values.begin(), numeric_values.end(), 0.0) / numeric_values.size();
+                double std_dev = std::sqrt(std::accumulate(numeric_values.begin(), numeric_values.end(), 0.0,
+                                                           [mean](double acc, double val)
+                                                           { return acc + (val - mean) * (val - mean); }) /
+                                           numeric_values.size());
+
+                if (std_dev == 0)
+                {
+                    std::cout << "Standard deviation is zero; skipping normalization for column: " << col_name << std::endl;
+                    continue;
+                }
+
+                // Step 3: Normalize numeric cells in the column
+                for (auto &cell : col)
+                {
+                    if (std::holds_alternative<double>(cell))
+                    {
+                        cell = (std::get<double>(cell) - mean) / std_dev;
+                    }
+                    else if (std::holds_alternative<long long>(cell))
+                    {
+                        cell = (static_cast<double>(std::get<long long>(cell)) - mean) / std_dev;
+                    }
+                }
+
+                std::cout << "Normalized column: " << col_name << std::endl;
+            }
+        }
+
+        // void normalize(DataFrame &df)
+        // {
+        //     for (const auto &col_name : df.column_order)
+        //     {
+        //         auto col = df[col_name];
+        //         double mean = std::accumulate(col.begin(), col.end(), 0.0) / col.size();
+        //         double std_dev = std::sqrt(std::accumulate(col.begin(), col.end(), 0.0,
+        //                                                    [mean](double acc, double val)
+        //                                                    { return acc + (val - mean) * (val - mean); }) /
+        //                                    col.size());
+        //         for (auto &val : col)
+        //         {
+        //             val = (val - mean) / std_dev;
+        //         }
+        //     }
+        // }
 
         void show()
         {

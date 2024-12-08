@@ -66,7 +66,7 @@ inline void train_test_split(
     DatasetType dataset;
 
     dataset = convert_to_dataset(df);
-    shuffleLocal(dataset);
+    // shuffleLocal(dataset);
 
     size_t train_size = static_cast<size_t>(dataset.size() * TRAIN_SIZE);
 
@@ -181,9 +181,26 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
 
                 // Check if prediction matches the target
                 // if (test_targets[i][predicted_class]->data == 1.0)
-                if (test_targets[i][predicted_class]->data == 1.0)
+                // if (test_targets[i][predicted_class]->data == 1.0)
+                // {
+                //     correct++;
+                // }
+
+             
+
+                if (predicted_class >= 0 && predicted_class < test_targets[i].size())
+                {
+                    // if (test_targets[i][predicted_class]->data == 1.0)
+                    // {
+                    //     correct++;
+                    // }
+
+                       constexpr double EPSILON = 1e-6;
+                if (std::abs(test_targets[i][predicted_class]->data - 1.0) < EPSILON)
                 {
                     correct++;
+                }
+
                 }
             }
 

@@ -36,7 +36,8 @@
 #include <type_traits>
 #include <limits> // For NaN
 #include <optional>
-
+#include <numeric>
+#include <cmath>
 namespace microgradCpp
 {
     using Cell = std::variant<std::monostate, double, long long, std::string>;
@@ -52,6 +53,52 @@ namespace microgradCpp
         {
             return data_.size();
         }
+        void normalize()
+        {
+            std::vector<double> numeric_values;
+
+            // Step 1: Collect numeric values
+            for (const auto &cell : data_)
+            {
+                std::visit([&](auto &&arg)
+                           {
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_same_v<T, double> || std::is_same_v<T, long long>) {
+                    numeric_values.push_back(static_cast<double>(arg));
+                } }, cell);
+            }
+
+            if (numeric_values.empty())
+            {
+                std::cerr << "No numeric values to normalize." << std::endl;
+                return;
+            }
+
+            // Step 2: Calculate mean and standard deviation
+            double mean = std::accumulate(numeric_values.begin(), numeric_values.end(), 0.0) / numeric_values.size();
+            double std_dev = std::sqrt(std::accumulate(numeric_values.begin(), numeric_values.end(), 0.0,
+                                                       [mean](double acc, double val)
+                                                       { return acc + (val - mean) * (val - mean); }) /
+                                       numeric_values.size());
+
+            if (std_dev == 0)
+            {
+                std::cerr << "Standard deviation is zero; cannot normalize." << std::endl;
+                return;
+            }
+
+            // Step 3: Normalize numeric cells in data_
+            for (auto &cell : data_)
+            {
+                std::visit([&](auto &arg)
+                           {
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_same_v<T, double> || std::is_same_v<T, long long>) {
+                    arg = (static_cast<double>(arg) - mean) / std_dev;
+                } }, cell);
+            }
+        }
+
         // .................................................................. values_internal
         template <typename T>
         std::vector<T> values_internal() const

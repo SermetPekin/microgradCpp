@@ -1,8 +1,7 @@
 #include "micrograd.hpp"
 
-#include "value.hpp"  
-#include "mlp.hpp"    
-
+#include "value.hpp"
+#include "mlp.hpp"
 
 using namespace microgradCpp;
 
@@ -13,10 +12,16 @@ int main()
 
     DataFrame df;
     df.from_csv("./data/iris.csv");
-
+   df.normalize();
     df.encode_column("variety");
+ 
+
 
     df.print();
+    df.shuffle();
+    df.print();
+
+    // stop();
 
     // return 0;
     // shuffle(dataset);
@@ -26,9 +31,9 @@ int main()
     // Input: 4 features, hidden layers: [7,7], output: 3 classes
     // Define the model and hyperparameters
     // MLP model(4, {10, 10, 3});
-    MLP model(4, {10, 10, 3});
+    MLP model(4, {16, 16, 3});
     double learning_rate = 0.001;
-    int epochs = 100;
+    int epochs = 300;
     // Train and evaluate the model
     train_eval(df, TRAIN_SIZE, model, learning_rate, epochs);
 

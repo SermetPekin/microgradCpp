@@ -14,7 +14,7 @@ LDFLAGS += -fsanitize=address
 TARGET = main
 
 # Source files for the main program
-SRCS = main.cpp
+SRCS = easy_df.cpp
 
 # Object files (generated from source files)
 OBJS = $(SRCS:.cpp=.o)
