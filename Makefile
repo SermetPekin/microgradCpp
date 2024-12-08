@@ -40,6 +40,7 @@ clean:
 	rm -f $(OBJS) $(TARGET) $(TEST_TARGET)
 
 test: clean test_only
+pytest: clean test_only
 
 
 .PHONY: clean run test

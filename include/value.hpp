@@ -48,7 +48,7 @@ public:
     mutable bool topo_cached = false;
 
     // Constructor
-    Value(double data, const std::string &label = "", bool cache_topology = true )
+    Value(double data, const std::string &label = "", bool cache_topology = true)
         : data(data),
           grad(0.0),
           label(label),
@@ -69,6 +69,17 @@ public:
             parents.push_back(parent);
         }
     }
+    // Member function for Value == double
+    bool operator==(double val) const
+    {
+        return data == val;
+    }
+
+    // Friend function for double == Value
+    friend bool operator==(double val, const Value &v)
+    {
+        return val == v.data;
+    }
 
     // Build topological order for backpropagation (with caching)
     std::vector<std::shared_ptr<Value>> build_topological_order()
@@ -83,6 +94,11 @@ public:
 
         std::function<void(Value *)> visit = [&](Value *v)
         {
+            if (!v)
+            {
+                throw std::runtime_error("Null pointer encountered in build_topological_order");
+            }
+
             if (v && visited.find(v) == visited.end())
             {
                 visited.insert(v);

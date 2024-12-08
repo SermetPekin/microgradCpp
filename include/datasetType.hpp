@@ -6,11 +6,49 @@
 #include <iostream>
 #include "value.hpp"
 #include "types.hpp"
+#include "dataframe.hpp"
 using namespace microgradCpp;
 
 inline DatasetType convert_to_dataset(const vv_double &data, int target_column = -1)
 {
     DatasetType dataset;
+
+    for (const auto &row : data)
+    {
+        if (row.empty())
+        {
+            continue; // Skip empty rows
+        }
+
+        // Determine target column index
+        int target_idx = (target_column == -1) ? row.size() - 1 : target_column;
+        // Create inputs and targets
+        std::vector<std::shared_ptr<Value>> inputs;
+        std::vector<std::shared_ptr<Value>> targets;
+        for (size_t i = 0; i < row.size(); ++i)
+        {
+            if (static_cast<int>(i) == target_idx)
+            {
+                targets.push_back(std::make_shared<Value>(row[i]));
+            }
+            else
+            {
+                inputs.push_back(std::make_shared<Value>(row[i]));
+            }
+        }
+
+        // Add the pair to the dataset
+        dataset.emplace_back(inputs, targets);
+    }
+
+    return dataset;
+}
+
+inline DatasetType convert_to_dataset(const DataFrame &df, int target_column = -1)
+{
+    DatasetType dataset;
+    vv_double data = df.to_vv_double();
+
 
     for (const auto &row : data)
     {

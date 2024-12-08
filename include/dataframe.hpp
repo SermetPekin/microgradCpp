@@ -54,6 +54,7 @@
 #include "header.hpp"
 #include "range.hpp"
 #include "console_utils.hpp"
+#include "types.hpp"
 
 namespace microgradCpp
 
@@ -78,6 +79,12 @@ namespace microgradCpp
 
         static inline bool DEFAULT_INPLACE = true;
 
+        int size() const
+        {
+
+            return get_all_row_indices().size();
+        }
+
         DataFrame operator()(const std::initializer_list<int> &row_indices, const std::vector<std::string> &col_names)
         {
             return this->slice(std::vector<size_t>(row_indices.begin(), row_indices.end()), col_names, DEFAULT_INPLACE);
@@ -94,6 +101,82 @@ namespace microgradCpp
             auto numbers = range.to_vector<size_t>();
 
             return this->slice(numbers, col_names, DEFAULT_INPLACE);
+        }
+
+        DataFrame rows(const Range &range)
+        {
+
+            auto numbers = range.to_vector<size_t>();
+
+            return this->slice(numbers, column_order, DEFAULT_INPLACE);
+        }
+
+        v_string v(const Range &column_range)
+        {
+            v_string items;
+            for (size_t i = 0; i < column_order.size(); ++i)
+            {
+                if (column_range.includes(i))
+                {
+                    items.push_back(column_order[i]);
+                }
+            }
+            return items;
+        }
+
+        vv_double to_vv_double() const
+        {
+            vv_double result;
+
+            if (columns.empty())
+                return result;
+
+            // Determine the number of rows based on the first column
+            size_t num_rows = columns.begin()->second.size();
+
+            // Iterate through each row
+            for (size_t i = 0; i < num_rows; ++i)
+            {
+                std::vector<double> row;
+                for (const auto &col_name : column_order)
+                {
+                    const auto &col = columns.at(col_name);
+                    if (i < col.size())
+                    {
+                        const auto &cell = col[i];
+                        if (std::holds_alternative<double>(cell))
+                        {
+                            row.push_back(std::get<double>(cell));
+                        }
+                        else
+                        {
+                            row.push_back(0.0);  
+                        }
+                    }
+                }
+                result.push_back(row);
+            }
+
+            return result;
+        }
+
+        // vv_string v(const Range &colum_range){
+
+        //     vv_string items ;
+        //     for(int i =0 ; i< column_order.size() ; i++ ){
+        //             if( colum_range.includes( i ))
+        //                 items.push_back( column_order[ i ]) ;
+
+        //     }
+        //     return items ;
+
+        // }
+        DataFrame subset(const Range &range, const Range &colum_range)
+        {
+
+            auto numbers = range.to_vector<size_t>();
+
+            return this->slice(numbers, column_order, DEFAULT_INPLACE);
         }
 
         DataFrame operator()(const Range &range)
@@ -115,6 +198,11 @@ namespace microgradCpp
             return this->slice(get_all_row_indices(), column_order, DEFAULT_INPLACE);
         }
 
+        // DataFrame operator()(const Range &range)
+        // {
+        //     return this->slice(range.to_vector<size_t>(), column_order, DEFAULT_INPLACE);
+        // }
+
         DataFrame operator()(const std::vector<size_t> &row_indices)
         {
             return this->slice(row_indices, column_order, DEFAULT_INPLACE);
@@ -131,12 +219,6 @@ namespace microgradCpp
 
             return this->slice(get_all_row_indices(), col_names, inplace);
         }
-         
-
-        
-
-
-
 
         DataFrame slice(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
         {

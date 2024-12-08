@@ -158,4 +158,19 @@ g++ -std=c++17 -Iinclude -O2 -o main main.cpp
 make run
 
 
+ g++ -std=c++20 -Iinclude -O2  -g -o main easy_df.cpp 
+
+g++ -std=c++20 -Iinclude -g -O0 -o main easy_df.cpp
+
+lldb ./main 
+
+r 
+bt 
+
+... g++ -std=c++20 -fsanitize=address -g -o main main.cpp
+
+Address Sanitizer will provide detailed error messages if there are invalid memory accesses.
+g++ -std=c++20 -fsanitize=address  -Iinclude -g -O0 -o main easy_df.cpp
+./main
+
 */

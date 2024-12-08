@@ -14,9 +14,22 @@
 #include <unordered_map>
 #include "mlp.hpp"
 #include "console_utils.hpp"
+#include "types.hpp"
+using namespace microgradCpp;
 
 using vv_string = std::vector<std::vector<std::string>>;
 using vv_double = std::vector<std::vector<double>>;
+
+static inline v_shared_Value one_hot_encode(int class_index, int num_classes)
+{
+
+    v_shared_Value target(num_classes, std::make_shared<Value>(0.0));
+
+    target[class_index] = std::make_shared<Value>(1.0);
+
+    return target;
+}
+
 inline void log_model_info(const std::vector<int> &layer_sizes,
                            size_t input_features,
                            size_t output_targets,

@@ -20,8 +20,8 @@ namespace microgradCpp
 
         std::exit(EXIT_FAILURE);
     }
-
-    inline void epic_out_of_range(const std::string &reason )
+  
+    inline void epic_out_of_range(const std::string &reason)
     {
         std::cout << "\n💥💥💥 BOOM! 💥💥💥" << std::endl;
         std::cout << "❌ Uh-oh! Something went wrong: [ 🔥 " << reason << " 🔥 ] " << std::endl;
@@ -29,10 +29,13 @@ namespace microgradCpp
         std::cout << "📉 Better luck next time, brave coder!" << std::endl;
         std::cout << "🔥🔥🔥 Program terminated. 🔥🔥🔥\n"
                   << std::endl;
-    
-        throw std::out_of_range(reason) ; 
-    }
 
+        throw std::out_of_range(reason);
+    }
+  inline void stop(const std::string &reason = "...")
+    {
+        epic_out_of_range(reason);
+    }
     // Function to format shapes for display
 
     inline std::string format_shape(size_t rows, size_t cols)

@@ -24,31 +24,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
-#include "value.hpp"
 #include <vector>
 #include <memory>
 #include <cmath>
 #include <iostream>
+#include "value.hpp"
+#include "console_utils.hpp"
+#include "data_utils.hpp"
 
+using namespace microgradCpp ; 
 
-
-
-
-class Loss {
+class Loss
+{
 public:
     static std::shared_ptr<Value> cross_entropy(
-        const std::vector<std::shared_ptr<Value>>& predictions,
-        const std::vector<std::shared_ptr<Value>>& targets
-    ) {
+        const std::vector<std::shared_ptr<Value>> &predictions,
+        const std::vector<std::shared_ptr<Value>> &targets)
+    {
         // Assumes:
         // 1. predictions are already probabilities (from softmax in MLP forward)
         // 2. targets are one-hot encoded: exactly one element is 1, others are 0
         // cross entropy = -sum_i t_i * log(p_i)
 
-        auto loss = std::make_shared<Value>(0.0);
 
-        for (size_t i = 0; i < predictions.size(); ++i) {
+    // auto XX = one_hot_encode( targets , 3 ) ; 
+
+        if (predictions.size() != targets.size() || !(predictions.size() > 0) ){
+            
+            std::cout << predictions.size() << " predictions <== ==> targets " <<targets.size()  ;  
+            // stop( "problem") ; 
+        }
+            auto loss = std::make_shared<Value>(0.0);
+
+        for (size_t i = 0; i < predictions.size(); ++i)
+        {
             // log(p_i)
             auto logp = predictions[i]->log();
             // accumulate t_i * log(p_i)

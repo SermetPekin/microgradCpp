@@ -32,6 +32,7 @@ THE SOFTWARE.
 #include "dataframe.hpp"
 #include "dataframe_utils.hpp"
 #include "sp_testing_utils.hpp"
+#include "train_eval.hpp"
 
 #include "value.hpp"
 #include "iris.hpp"

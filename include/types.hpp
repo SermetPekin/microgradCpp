@@ -44,6 +44,7 @@ namespace microgradCpp
     using ColumnData = std::variant<std::vector<double>, std::vector<std::string>>;
 
     using vv_shared_Value = std::vector<std::vector<std::shared_ptr<Value>>>;
+    using v_shared_Value =  std::vector<std::shared_ptr<Value>>;
 
     using DatasetType = std::vector<std::pair<std::vector<std::shared_ptr<Value>>, std::vector<std::shared_ptr<Value>>>>;
     using ColRows = std::vector<std::vector<std::shared_ptr<Value>>>;
