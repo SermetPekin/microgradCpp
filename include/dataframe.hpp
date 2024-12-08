@@ -133,6 +133,11 @@ namespace microgradCpp
         }
          
 
+        
+
+
+
+
         DataFrame slice(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
         {
 
