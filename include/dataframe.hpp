@@ -131,24 +131,7 @@ namespace microgradCpp
 
             return this->slice(get_all_row_indices(), col_names, inplace);
         }
-        // void slice_inplace(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names)
-        // {
-        //     *this = this->slice(row_indices, col_names);
-        // }
-
-        // DataFrame slice_nodiscard(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names)
-        // {
-        //     return this->slice(row_indices, col_names);
-        // }
-
-        // DataFrame slice(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
-        // {
-        //     if (!inplace)
-        //     {
-        //         return slice_nodiscard(row_indices, col_names);
-        //     }
-        //      slice_inplace(row_indices, col_names);
-        // }
+         
 
         DataFrame slice(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
         {
@@ -159,9 +142,7 @@ namespace microgradCpp
                 if (row_idx >= num_rows)
                 {
 
-                    epic_failure_exit("Row index " + std::to_string(row_idx) + " is out of bounds. DataFrame has " + std::to_string(num_rows) + " rows.");
-
-                    throw std::out_of_range("Row index " + std::to_string(row_idx) + " is out of bounds. DataFrame has " + std::to_string(num_rows) + " rows.");
+                    epic_out_of_range("Row index " + std::to_string(row_idx) + " is out of bounds. DataFrame has " + std::to_string(num_rows) + " rows.");
                 }
             }
 
@@ -621,10 +602,17 @@ namespace microgradCpp
         //     std::cout << "========================\n\n";
         // }
 
-        void add_column(const std::string &name, const Column &col)
+        // void add_column(const std::string &name, const Column &col)
+        // {
+        //     columns[name] = col;
+        //     column_order.push_back(name);
+        // }
+
+        void add_column(const std::string &name, const Column &col, std::optional<std::type_index> type = std::nullopt)
         {
             columns[name] = col;
             column_order.push_back(name);
+            column_types[name] = type;
         }
 
     private:

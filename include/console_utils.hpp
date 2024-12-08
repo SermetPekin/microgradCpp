@@ -5,7 +5,7 @@
 #include <iostream>
 namespace microgradCpp
 {
-    inline void epic_failure_exit(const std::string &reason)
+    inline void epic_failure_exit(const std::string &reason, bool throw_ = true)
     {
         std::cout << "\n💥💥💥 BOOM! 💥💥💥" << std::endl;
         std::cout << "❌ Uh-oh! Something went wrong: [ 🔥 " << reason << " 🔥 ] " << std::endl;
@@ -13,7 +13,24 @@ namespace microgradCpp
         std::cout << "📉 Better luck next time, brave coder!" << std::endl;
         std::cout << "🔥🔥🔥 Program terminated. 🔥🔥🔥\n"
                   << std::endl;
+        if (throw_)
+        {
+            throw std::runtime_error(reason);
+        }
+
         std::exit(EXIT_FAILURE);
+    }
+
+    inline void epic_out_of_range(const std::string &reason )
+    {
+        std::cout << "\n💥💥💥 BOOM! 💥💥💥" << std::endl;
+        std::cout << "❌ Uh-oh! Something went wrong: [ 🔥 " << reason << " 🔥 ] " << std::endl;
+        std::cout << "🚀 Exiting the program... like a failed rocket launch!" << std::endl;
+        std::cout << "📉 Better luck next time, brave coder!" << std::endl;
+        std::cout << "🔥🔥🔥 Program terminated. 🔥🔥🔥\n"
+                  << std::endl;
+    
+        throw std::out_of_range(reason) ; 
     }
 
     // Function to format shapes for display
