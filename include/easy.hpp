@@ -124,6 +124,8 @@ void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, dou
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(lr);
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     // int epochs = 100;
     for (int epoch = 0; epoch < epochs; ++epoch)
     {
