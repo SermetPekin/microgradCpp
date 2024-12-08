@@ -143,6 +143,7 @@ namespace microgradCpp
         std::cout << "CSV file saved as: " << filename << std::endl;
     }
 
+
     inline void DataFrame::from_csv(const std::string &filename, bool has_header, char delimiter) // = true, ','
     {
         std::ifstream file(filename);
@@ -224,6 +225,89 @@ namespace microgradCpp
 
         file.close();
     }
+
+
+    // inline void DataFrame::from_csvBackup(const std::string &filename, bool has_header, char delimiter) // = true, ','
+    // {
+    //     std::ifstream file(filename);
+    //     if (!file.is_open())
+    //     {
+    //         throw std::runtime_error("Error opening file: " + filename);
+    //     }
+
+    //     std::string line;
+    //     std::vector<std::string> column_names;
+    //     bool is_first_line = true;
+
+    //     while (std::getline(file, line))
+    //     {
+    //         std::stringstream ss(line);
+    //         std::string cell;
+    //         std::vector<std::string> cells;
+
+    //         while (std::getline(ss, cell, delimiter))
+    //         {
+    //             cells.push_back(trim(cell));
+    //         }
+
+    //         if (is_first_line && has_header)
+    //         {
+    //             column_names = cells;
+    //             for (auto &col : column_names)
+    //             {
+
+    //                 col = trim(col);  // TODO 
+                    
+    //                 columns[col] = Column();
+    //                 column_types[col] = std::nullopt; // Initialize types as unknown
+    //             }
+    //             is_first_line = false;
+    //         }
+    //         else
+    //         {
+    //             if (!has_header && is_first_line)
+    //             {
+    //                 // If no header, create generic column names
+    //                 for (size_t i = 0; i < cells.size(); ++i)
+    //                 {
+    //                     column_names.push_back("column_" + std::to_string(i));
+    //                     columns[column_names[i]] = Column();
+    //                     column_types[column_names[i]] = std::nullopt;
+    //                 }
+    //                 is_first_line = false;
+    //             }
+
+    //             for (size_t i = 0; i < cells.size(); ++i)
+    //             {
+    //                 const auto &col_name = column_names[i];
+    //                 const std::string &value = cells[i];
+
+    //                 if (is_numeric(value))
+    //                 {
+    //                     // Try to convert to double or long long
+    //                     try
+    //                     {
+    //                         double num = std::stod(value);
+    //                         columns[col_name].push_back(num);
+    //                         column_types[col_name] = typeid(double);
+    //                     }
+    //                     catch (const std::invalid_argument &)
+    //                     {
+    //                         columns[col_name].push_back(value);
+    //                         column_types[col_name] = typeid(std::string);
+    //                     }
+    //                 }
+    //                 else
+    //                 {
+    //                     columns[col_name].push_back(value);
+    //                     column_types[col_name] = typeid(std::string);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     file.close();
+    // }
 
     // namespace
 }
