@@ -143,7 +143,6 @@ namespace microgradCpp
         std::cout << "CSV file saved as: " << filename << std::endl;
     }
 
-
     inline void DataFrame::from_csv(const std::string &filename, bool has_header, char delimiter) // = true, ','
     {
         std::ifstream file(filename);
@@ -153,7 +152,7 @@ namespace microgradCpp
         }
 
         std::string line;
-        std::vector<std::string> column_names;
+        // std::vector<std::string> column_names;
         bool is_first_line = true;
 
         while (std::getline(file, line))
@@ -169,12 +168,12 @@ namespace microgradCpp
 
             if (is_first_line && has_header)
             {
-                column_names = cells;
-                for (auto &col : column_names)
+                column_order = cells;
+                for (auto &col : column_order)
                 {
 
-                    col = trim(col);  // TODO 
-                    
+                    col = trim(col); // TODO
+
                     columns[col] = Column();
                     column_types[col] = std::nullopt; // Initialize types as unknown
                 }
@@ -187,16 +186,22 @@ namespace microgradCpp
                     // If no header, create generic column names
                     for (size_t i = 0; i < cells.size(); ++i)
                     {
-                        column_names.push_back("column_" + std::to_string(i));
-                        columns[column_names[i]] = Column();
-                        column_types[column_names[i]] = std::nullopt;
+
+                        std::string col_name = "column_" + std::to_string(i);
+                        column_order.push_back(col_name);
+                        columns[col_name] = Column();
+                        column_types[col_name] = std::nullopt;
+
+                        // column_names.push_back("column_" + std::to_string(i));
+                        // columns[column_names[i]] = Column();
+                        // column_types[column_names[i]] = std::nullopt;
                     }
                     is_first_line = false;
                 }
 
                 for (size_t i = 0; i < cells.size(); ++i)
                 {
-                    const auto &col_name = column_names[i];
+                    const auto &col_name = column_order[i];
                     const std::string &value = cells[i];
 
                     if (is_numeric(value))
@@ -225,7 +230,6 @@ namespace microgradCpp
 
         file.close();
     }
-
 
     // inline void DataFrame::from_csvBackup(const std::string &filename, bool has_header, char delimiter) // = true, ','
     // {
@@ -256,8 +260,8 @@ namespace microgradCpp
     //             for (auto &col : column_names)
     //             {
 
-    //                 col = trim(col);  // TODO 
-                    
+    //                 col = trim(col);  // TODO
+
     //                 columns[col] = Column();
     //                 column_types[col] = std::nullopt; // Initialize types as unknown
     //             }

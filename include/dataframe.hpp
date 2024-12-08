@@ -68,15 +68,19 @@ namespace microgradCpp
         std::unordered_map<std::string, std::optional<std::type_index>> column_types;
         std::unordered_map<std::string, std::unordered_map<std::string, int>> encoding_mappings;
 
+        std::vector<std::string> column_order;
+
         // ............................................................. get_column_names
         std::vector<std::string> get_column_names() const
         {
-            std::vector<std::string> names;
-            for (const auto &[name, _] : columns)
-            {
-                names.push_back(name);
-            }
-            return names;
+
+            return column_order;
+            // std::vector<std::string> names;
+            // for (const auto &[name, _] : columns)
+            // {
+            //     names.push_back(name);
+            // }
+            // return names;
         }
 
         void print_shape() const
@@ -326,7 +330,11 @@ namespace microgradCpp
             return "unknown";
         }
 
-        // Rocking start print method
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <variant>
+
         void rocking_star_print(size_t n = 10) const
         {
             std::cout << "\n🚀 DataFrame Overview 🚀\n";
@@ -343,7 +351,7 @@ namespace microgradCpp
             // Display column names and types
             std::cout << "\n🧩 Columns and Data Types:\n";
             std::cout << "---------------------------\n";
-            for (const auto &[name, col] : columns)
+            for (const auto &name : column_order)
             {
                 std::cout << "🔹 " << std::setw(15) << std::left << name << " | [" << get_type_string(name) << "]\n";
             }
@@ -352,35 +360,36 @@ namespace microgradCpp
             std::cout << "\n🔍 First " << n << " Rows:\n";
             std::cout << "---------------------------\n";
 
-            // Print column headers
-            for (const auto &[name, _] : columns)
+            // Print column headers in the correct order
+            for (const auto &name : column_order)
             {
                 std::cout << std::setw(15) << std::left << name;
             }
             std::cout << "\n";
 
             // Print separator line
-            for (size_t i = 0; i < columns.size(); ++i)
+            for (size_t i = 0; i < column_order.size(); ++i)
             {
                 std::cout << std::setw(15) << std::setfill('-') << "" << std::setfill(' ');
             }
             std::cout << "\n";
 
-            // Print rows
+            // Print rows in the correct order
             for (size_t row = 0; row < std::min(n, num_rows); ++row)
             {
-                for (const auto &[_, col] : columns)
+                for (const auto &name : column_order)
                 {
+                    const auto &col = columns.at(name);
                     if (row < col.size())
                     {
                         std::visit([](const auto &value)
                                    {
-                            using T = std::decay_t<decltype(value)>;
-                            if constexpr (std::is_same_v<T, std::monostate>) {
-                                std::cout << std::setw(15) << "NaN";
-                            } else {
-                                std::cout << std::setw(15) << value;
-                            } }, col[row]);
+                    using T = std::decay_t<decltype(value)>;
+                    if constexpr (std::is_same_v<T, std::monostate>) {
+                        std::cout << std::setw(15) << "NaN";
+                    } else {
+                        std::cout << std::setw(15) << value;
+                    } }, col[row]);
                     }
                     else
                     {
@@ -392,6 +401,73 @@ namespace microgradCpp
 
             std::cout << "========================\n\n";
         }
+
+        // Rocking start print method
+        // void rocking_star_printBackup(size_t n = 10) const
+        // {
+        //     std::cout << "\n🚀 DataFrame Overview 🚀\n";
+        //     std::cout << "========================\n";
+
+        //     // Display shape
+        //     size_t num_rows = 0;
+        //     if (!columns.empty())
+        //     {
+        //         num_rows = columns.begin()->second.size();
+        //     }
+        //     std::cout << "📝 Shape: (" << num_rows << " rows, " << columns.size() << " columns)\n";
+
+        //     // Display column names and types
+        //     std::cout << "\n🧩 Columns and Data Types:\n";
+        //     std::cout << "---------------------------\n";
+        //     for (const auto &[name, col] : columns)
+        //     {
+        //         std::cout << "🔹 " << std::setw(15) << std::left << name << " | [" << get_type_string(name) << "]\n";
+        //     }
+
+        //     // Display first 'n' rows
+        //     std::cout << "\n🔍 First " << n << " Rows:\n";
+        //     std::cout << "---------------------------\n";
+
+        //     // Print column headers
+        //     for (const auto &[name, _] : columns)
+        //     {
+        //         std::cout << std::setw(15) << std::left << name;
+        //     }
+        //     std::cout << "\n";
+
+        //     // Print separator line
+        //     for (size_t i = 0; i < columns.size(); ++i)
+        //     {
+        //         std::cout << std::setw(15) << std::setfill('-') << "" << std::setfill(' ');
+        //     }
+        //     std::cout << "\n";
+
+        //     // Print rows
+        //     for (size_t row = 0; row < std::min(n, num_rows); ++row)
+        //     {
+        //         for (const auto &[_, col] : columns)
+        //         {
+        //             if (row < col.size())
+        //             {
+        //                 std::visit([](const auto &value)
+        //                            {
+        //                     using T = std::decay_t<decltype(value)>;
+        //                     if constexpr (std::is_same_v<T, std::monostate>) {
+        //                         std::cout << std::setw(15) << "NaN";
+        //                     } else {
+        //                         std::cout << std::setw(15) << value;
+        //                     } }, col[row]);
+        //             }
+        //             else
+        //             {
+        //                 std::cout << std::setw(15) << "NaN";
+        //             }
+        //         }
+        //         std::cout << "\n";
+        //     }
+
+        //     std::cout << "========================\n\n";
+        // }
 
     private:
         void m_save_csv(const std::string &file_name, std::optional<char> delimiter = std::nullopt)

@@ -201,8 +201,8 @@ TEST(DataFrameTest, LoadCSVParts)
 
     ASSERT_TRUE(sptest::contains(columns, "sepal_length")) << "'sepal_length' not found in columns";
 
-    // EXPECT_EQ(columns[0], "sepal_length");
-    // EXPECT_EQ(columns[4], "species");
+    EXPECT_EQ(columns[0], "sepal_length");
+    EXPECT_EQ(columns[4], "species");
 
     // std::remove(temp_file.c_str());
 }
