@@ -10,6 +10,8 @@
 #include "dataframe.hpp"
 #include "types.hpp"
 #include "datasetType.hpp"
+#include "value.hpp"
+#include "mlp.hpp"
 
 using namespace microgradCpp;
 
@@ -34,6 +36,21 @@ using namespace microgradCpp;
 //     // test_targets = test_df.get_targets(); // Extract targets from test DataFrame
 // }
 
+inline std::vector<std::shared_ptr<Value>> one_hot_encodeLocal(int class_index, int num_classes)
+{
+    std::vector<std::shared_ptr<Value>> target(num_classes, std::make_shared<Value>(0.0));
+    target[class_index] = std::make_shared<Value>(1.0);
+    return target;
+}
+
+inline void shuffleLocal(DatasetType &dataset)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    // gen.seed(42); // A fixed seed for reproducibility
+    std::shuffle(dataset.begin(), dataset.end(), gen);
+}
+
 // The updated train_eval function
 inline void train_test_split(
     const DataFrame &df,
@@ -49,17 +66,28 @@ inline void train_test_split(
     DatasetType dataset;
 
     dataset = convert_to_dataset(df);
+    shuffleLocal(dataset);
+
     size_t train_size = static_cast<size_t>(dataset.size() * TRAIN_SIZE);
 
+    std::cout << "train_size : " << train_size;
+    // stop();
+    int num_classes = 3;
     for (size_t i = 0; i < train_size; ++i)
     {
         train_inputs.push_back(dataset[i].first);
-        train_targets.push_back(dataset[i].second);
+
+        // train_targets.push_back(dataset[i].second);
+        int class_index = static_cast<int>(dataset[i].second[0]->data);
+        train_targets.push_back(one_hot_encodeLocal(class_index, num_classes));
     }
     for (size_t i = train_size; i < dataset.size(); ++i)
     {
         test_inputs.push_back(dataset[i].first);
-        test_targets.push_back(dataset[i].second);
+        // test_targets.push_back(dataset[i].second);
+
+        int class_index = static_cast<int>(dataset[i].second[0]->data);
+        test_targets.push_back(one_hot_encodeLocal(class_index, num_classes));
     }
 }
 inline void print(const ColRows &colrows)
@@ -106,19 +134,16 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    print(test_targets);
-    print(train_targets);
-    print(train_inputs);
-    print(test_inputs);
-    // throw std::runtime_error("[ok]");
-
-    // return std::EXIT_SUCCESS ;
+    v_string Dummy = {"aa", "bb"};
+    display_data(train_inputs, train_targets, Dummy);
+    std::cout << "=================================\n";
+    display_data(test_inputs, test_targets, Dummy);
+    // stop("...");
 
     // Training loop
     for (int epoch = 0; epoch < epochs; ++epoch)
     {
         double total_loss = 0.0;
-        std::cout << "[ Here it is ] ...Epoch " << epoch + 1 << "/" << epochs << ", Loss: " << total_loss / train_inputs.size() << std::endl;
 
         size_t NUM_Training = train_inputs.size();
 
@@ -127,10 +152,6 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
 
             // Forward pass (training=true)
             auto predictions = model.forward(train_inputs[i], true);
-            std::cout << "[ Here it is ] predictions ";
-
-            // int num_classes = predictions.size();                                  // Number of classes inferred from predictions
-            // v_shared_Value target = one_hot_encode(train_targets[i], num_classes); // Convert class index to one-hot
 
             // Compute Cross-Entropy Loss
             auto loss = Loss::cross_entropy(predictions, train_targets[i]);
@@ -143,8 +164,6 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
             // Update weights
             optimizer.step(model.parameters());
         }
-
-        std::cout << "Epoch " << epoch + 1 << "/" << epochs << ", Loss: " << total_loss / train_inputs.size() << std::endl;
 
         // Evaluate test accuracy every 10 epochs and on the last epoch
         if (epoch % 10 == 0 || epoch == epochs - 1)
@@ -161,6 +180,7 @@ inline void train_eval(DataFrame &df, double train_size, MLP &model, double lr =
                 int predicted_class = std::distance(predictions.begin(), std::max_element(predictions.begin(), predictions.end()));
 
                 // Check if prediction matches the target
+                // if (test_targets[i][predicted_class]->data == 1.0)
                 if (test_targets[i][predicted_class]->data == 1.0)
                 {
                     correct++;

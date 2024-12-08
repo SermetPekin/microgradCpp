@@ -160,6 +160,12 @@ public:
 
     std::vector<std::shared_ptr<Value>> forward(const std::vector<std::shared_ptr<Value>> &inputs, bool training = true)
     {
+
+        if (inputs.empty())
+        {
+            throw std::runtime_error("Empty input provided to MLP forward pass.");
+        }
+
         auto activations = inputs;
         for (size_t i = 0; i < layers.size(); ++i)
         {

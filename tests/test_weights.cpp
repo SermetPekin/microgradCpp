@@ -100,3 +100,114 @@ TEST_F(MLPTest, WeightsUpdate) {
 }
  
 
+TEST_F(MLPTest, ForwardPassOutput) {
+    auto predictions = model.forward(inputs[0], true);
+    ASSERT_EQ(predictions.size(), 3) << "Forward pass output size should match the number of output neurons (3).";
+
+    for (const auto& pred : predictions) {
+        ASSERT_NE(pred, nullptr) << "Prediction contains a null pointer.";
+    }
+}
+
+TEST_F(MLPTest, CrossEntropyLoss) {
+    auto predictions = model.forward(inputs[0], true);
+    auto loss = Loss::cross_entropy(predictions, targets[0]);
+
+    ASSERT_TRUE(std::isfinite(loss->data)) << "Loss should be a finite value.";
+    ASSERT_GE(loss->data, 0.0) << "Cross-Entropy Loss should be non-negative.";
+}
+TEST_F(MLPTest, ZeroGradients) {
+    optimizer.zero_grad(model.parameters());
+
+    for (const auto& param : model.parameters()) {
+        ASSERT_EQ(param->grad, 0.0) << "Gradients should be zeroed out before backward pass.";
+    }
+}
+TEST_F(MLPTest, GradientComputation) {
+    auto predictions = model.forward(inputs[0], true);
+    auto loss = Loss::cross_entropy(predictions, targets[0]);
+
+    // Perform backward pass
+    optimizer.zero_grad(model.parameters());
+    loss->backward();
+
+    bool gradients_found = false;
+    for (const auto& param : model.parameters()) {
+        if (param->grad != 0.0) {
+            gradients_found = true;
+            break;
+        }
+    }
+
+    ASSERT_TRUE(gradients_found) << "Gradients should be non-zero after backward pass.";
+}
+
+
+TEST_F(MLPTest, ConsistentOutputInEvaluationMode) {
+    auto predictions1 = model.forward(inputs[0], false);
+    auto predictions2 = model.forward(inputs[0], false);
+
+    for (size_t i = 0; i < predictions1.size(); ++i) {
+        ASSERT_NEAR(predictions1[i]->data, predictions2[i]->data, 1e-6) << "Outputs should be consistent in evaluation mode.";
+    }
+}
+
+
+TEST_F(MLPTest, EmptyInputs) {
+    // ColRows empty_inputs;
+    // EXPECT_THROW(model.forward(empty_inputs, true), std::runtime_error) << "Model should throw an error for empty inputs.";
+
+    std::vector<std::shared_ptr<Value>> empty_input;
+EXPECT_THROW(model.forward(empty_input, true), std::runtime_error) << "Model should throw an error for empty inputs.";
+
+}
+
+TEST_F(MLPTest, SingleDataPoint) {
+    ColRows single_input = {{std::make_shared<Value>(1.0), std::make_shared<Value>(2.0), std::make_shared<Value>(3.0), std::make_shared<Value>(4.0)}};
+    ColRows single_target = {{std::make_shared<Value>(1.0), std::make_shared<Value>(0.0), std::make_shared<Value>(0.0)}};
+
+    auto predictions = model.forward(single_input[0], true);
+    auto loss = Loss::cross_entropy(predictions, single_target[0]);
+
+    ASSERT_TRUE(std::isfinite(loss->data)) << "Loss should be finite for a single data point.";
+}
+
+
+// TEST_F(MLPTest, TrainingLoopConvergence) {
+//     double previous_loss = std::numeric_limits<double>::max();
+//     for (int epoch = 0; epoch < 10; ++epoch) {
+//         auto predictions = model.forward(inputs[0], true);
+//         auto loss = Loss::cross_entropy(predictions, targets[0]);
+
+//         optimizer.zero_grad(model.parameters());
+//         loss->backward();
+//         optimizer.step(model.parameters());
+
+//         std::cout << "Epoch " << epoch + 1 << ": Loss = " << loss->data << std::endl;
+
+//         ASSERT_LT(loss->data, previous_loss) << "Loss did not decrease in epoch " << epoch + 1;
+//         previous_loss = loss->data;
+//     }
+// }
+
+TEST_F(MLPTest, TrainingLoopConvergence2) {
+    double previous_loss = std::numeric_limits<double>::max();
+    for (int epoch = 0; epoch < 10; ++epoch) {
+        auto predictions = model.forward(inputs[0], true);
+        auto loss = Loss::cross_entropy(predictions, targets[0]);
+
+        std::cout << "Epoch " << epoch + 1 << ": Loss = " << loss->data << std::endl;
+
+        optimizer.zero_grad(model.parameters());
+        loss->backward();
+        optimizer.step(model.parameters());
+
+        // Verify weight updates
+        for (const auto& param : model.parameters()) {
+            std::cout << "Weight: " << param->data << ", Grad: " << param->grad << std::endl;
+        }
+
+        ASSERT_LT(loss->data, previous_loss) << "Loss did not decrease in epoch " << epoch + 1;
+        previous_loss = loss->data;
+    }
+}

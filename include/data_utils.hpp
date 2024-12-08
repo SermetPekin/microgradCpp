@@ -20,6 +20,48 @@ using namespace microgradCpp;
 using vv_string = std::vector<std::vector<std::string>>;
 using vv_double = std::vector<std::vector<double>>;
 
+
+
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <memory>
+#include "value.hpp"
+
+inline 
+void display_data(const ColRows& inputs, const ColRows& targets, const std::vector<std::string>& column_names ) {
+    // Print column headers
+    for (const auto& col_name : column_names) {
+        std::cout << std::setw(15) << std::left << col_name;
+    }
+    std::cout << std::setw(15) << std::left << "target";
+    std::cout << "\n";
+
+    // Print separator line
+    for (size_t i = 0; i < column_names.size() + 1; ++i) {
+        std::cout << std::setw(15) << std::setfill('-') << "" << std::setfill(' ');
+    }
+    std::cout << "\n";
+
+    // Print rows of data
+    for (size_t i = 0; i < inputs.size(); ++i) {
+        for (const auto& value : inputs[i]) {
+            std::cout << std::setw(15) << std::left << value->data;
+        }
+
+        // Print the target
+        for (const auto& target : targets[i]) {
+            std::cout << std::setw(15) << std::left << target->data;
+        }
+
+        std::cout << "\n";
+    }
+
+    // Print final separator line
+    std::cout << "========================\n";
+}
+
+
 static inline v_shared_Value one_hot_encode(int class_index, int num_classes)
 {
 
