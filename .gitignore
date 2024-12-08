@@ -13,3 +13,4 @@ ignore*.*
 *.a
 
 
+main.dSYM/

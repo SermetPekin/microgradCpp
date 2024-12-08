@@ -306,6 +306,12 @@ std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs
 // *[V , V]
 inline std::shared_ptr<Value> operator*(const std::shared_ptr<Value> &lhs, const std::shared_ptr<Value> &rhs)
 {
+
+    if (!lhs || !rhs)
+    {
+        throw std::runtime_error("Null pointer in operator*");
+    }
+
     auto out = std::make_shared<Value>(lhs->data * rhs->data);
     out->add_parent(lhs);
     out->add_parent(rhs);

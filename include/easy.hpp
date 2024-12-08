@@ -39,9 +39,33 @@ THE SOFTWARE.
 #include "loss.hpp"
 #include "mlp.hpp"
 #include "sgd.hpp"
+#include "dataprocessor.hpp"
+#include "datasetType.hpp"
+#include "console_utils.hpp"
+#include "data_utils.hpp"
 
+#include "types.hpp"
 using namespace microgradCpp;
-inline DatasetType get_iris()
+
+inline DatasetType get_iris2() // ok
+{
+    DataProcessor processor;
+
+    vv_string data2 = processor.load_and_process("./data/iris.csv", true);
+
+    vv_double converted_data2 = processor.convert_to_double_with_encoding_(data2);
+
+    DatasetType dataset = convert_to_dataset(converted_data2);
+
+    return dataset;
+}
+
+inline DatasetType get_iris() // ok
+{
+    return get_iris2();
+}
+
+inline DatasetType get_iris1() // problem
 {
     // Load Iris dataset
     std::vector<std::vector<std::shared_ptr<Value>>> inputs;
@@ -86,8 +110,9 @@ inline void train_test_split(
         test_targets.push_back(dataset[i].second);
     }
 }
-
-inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model, double lr = 0.01, int epochs = 100)
+ 
+inline
+void train_eval(const DatasetType &dataset, double TRAIN_SIZE,   MLP &model, double lr = 0.01, int epochs = 100)
 {
 
     // Split into train and test sets (80-20 split)
@@ -98,8 +123,6 @@ inline void train_eval(const DatasetType &dataset, double TRAIN_SIZE, MLP &model
 
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(lr);
-
-    auto start = std::chrono::high_resolution_clock::now();
 
     // int epochs = 100;
     for (int epoch = 0; epoch < epochs; ++epoch)

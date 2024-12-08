@@ -7,10 +7,48 @@
 
 using namespace microgradCpp;
 
+/*
+
+g++ -g -o main main.cpp
+
+g++ -g -std=c++17 -Iinclude -O2 -o main main.cpp
+
+clang++  -std=c++17 -Iinclude  -g -o  main main.cpp
+
+(lldb) breakpoint set --file main.cpp --line 75
+(lldb) run
+
+(lldb) bt
+(lldb) print some_variable
+
+
+
+*/
+
+#include <iostream>
+#include <vector>
+#include <memory>
+// #include "value.hpp"  // Assuming Value class is defined here
+// #include "mlp.hpp"    // Assuming MLP class is defined here
+
+// using ColRows = std::vector<std::vector<std::shared_ptr<Value>>>;
+// using DatasetType = std::vector<std::pair<std::vector<std::shared_ptr<Value>>, std::vector<std::shared_ptr<Value>>>>;
+
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <iomanip>
+#include <sstream>
+#include "value.hpp" // Assuming Value class is defined here
+#include "mlp.hpp"   // Assuming MLP class is defined here
+
+// using ColRows = std::vector<std::vector<std::shared_ptr<Value>>>;
+// using DatasetType = std::vector<std::pair<std::vector<std::shared_ptr<Value>>, std::vector<std::shared_ptr<Value>>>>;
+
 int main()
 {
 
-    DatasetType dataset = get_iris();
+    DatasetType dataset = get_iris2();
 
     shuffle(dataset);
 
@@ -24,12 +62,27 @@ int main()
 
     // Create MLP model
     // Input: 4 features, hidden layers: [7,7], output: 3 classes
-    MLP model(4, {10, 10, 3});
+    MLP model(4, {7, 7, 3});
+
+    // Validate dataset and model
+    if (!validate_dataset_and_model(dataset, model, TRAIN_SIZE))
+    {
+        std::cerr << "Validation failed. Exiting." << std::endl;
+        return 1;
+    }
 
     // Create SGD optimizer with a learning rate of 0.005
     SGD optimizer(0.01);
 
     int epochs = 100;
+
+    int x = 0;
+    std::cout << "Epoch: " << epochs << ", Sample: " << x << std::endl;
+
+    // Validate input size
+    std::cout << "Input size: " << train_inputs[x].size() << std::endl;
+    std::cout << "Target size: " << train_targets[x].size() << std::endl;
+
     for (int epoch = 0; epoch < epochs; ++epoch)
     {
         double total_loss = 0.0;
@@ -37,6 +90,7 @@ int main()
         // Training loop
         for (size_t i = 0; i < train_inputs.size(); ++i)
         {
+
             // Forward pass (training=true to possibly enable dropout or other training-specific behavior in MLP)
             auto predictions = model.forward(train_inputs[i], true);
 
