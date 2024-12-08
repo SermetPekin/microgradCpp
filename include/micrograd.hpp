@@ -25,6 +25,7 @@ THE SOFTWARE.
 */
 
 #include "exceptions.hpp"
+#include "range.hpp"
 #include "header.hpp"
 #include "series.hpp"
 #include "dataframe.hpp"

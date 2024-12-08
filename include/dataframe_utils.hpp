@@ -70,6 +70,31 @@ namespace microgradCpp
         return end == trimmed.c_str() + trimmed.size();
     }
 
+    // // Implementation of the slicing operator()
+    // DataFrame DataFrame::operator()(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names)  
+    // {
+    //     DataFrame result;
+    //     for (const auto &col_name : col_names)
+    //     {
+    //         if (columns.find(col_name) == columns.end())
+    //         {
+    //             throw std::invalid_argument("Column " + col_name + " not found");
+    //         }
+
+    //         Column new_col;
+    //         for (const auto &row_idx : row_indices)
+    //         {
+    //             if (row_idx >= columns.at(col_name).size())
+    //             {
+    //                 throw std::out_of_range("Row index out of range");
+    //             }
+    //             new_col.push_back(columns.at(col_name)[row_idx]);
+    //         }
+    //         result.add_column(col_name, new_col);
+    //     }
+    //     return result;
+    // }
+
     inline void save_as_csv(const DataFrame &df, const std::string &filename, std::optional<char> delimiter)
     {
         static std::string NaNstr("");
@@ -230,88 +255,6 @@ namespace microgradCpp
 
         file.close();
     }
-
-    // inline void DataFrame::from_csvBackup(const std::string &filename, bool has_header, char delimiter) // = true, ','
-    // {
-    //     std::ifstream file(filename);
-    //     if (!file.is_open())
-    //     {
-    //         throw std::runtime_error("Error opening file: " + filename);
-    //     }
-
-    //     std::string line;
-    //     std::vector<std::string> column_names;
-    //     bool is_first_line = true;
-
-    //     while (std::getline(file, line))
-    //     {
-    //         std::stringstream ss(line);
-    //         std::string cell;
-    //         std::vector<std::string> cells;
-
-    //         while (std::getline(ss, cell, delimiter))
-    //         {
-    //             cells.push_back(trim(cell));
-    //         }
-
-    //         if (is_first_line && has_header)
-    //         {
-    //             column_names = cells;
-    //             for (auto &col : column_names)
-    //             {
-
-    //                 col = trim(col);  // TODO
-
-    //                 columns[col] = Column();
-    //                 column_types[col] = std::nullopt; // Initialize types as unknown
-    //             }
-    //             is_first_line = false;
-    //         }
-    //         else
-    //         {
-    //             if (!has_header && is_first_line)
-    //             {
-    //                 // If no header, create generic column names
-    //                 for (size_t i = 0; i < cells.size(); ++i)
-    //                 {
-    //                     column_names.push_back("column_" + std::to_string(i));
-    //                     columns[column_names[i]] = Column();
-    //                     column_types[column_names[i]] = std::nullopt;
-    //                 }
-    //                 is_first_line = false;
-    //             }
-
-    //             for (size_t i = 0; i < cells.size(); ++i)
-    //             {
-    //                 const auto &col_name = column_names[i];
-    //                 const std::string &value = cells[i];
-
-    //                 if (is_numeric(value))
-    //                 {
-    //                     // Try to convert to double or long long
-    //                     try
-    //                     {
-    //                         double num = std::stod(value);
-    //                         columns[col_name].push_back(num);
-    //                         column_types[col_name] = typeid(double);
-    //                     }
-    //                     catch (const std::invalid_argument &)
-    //                     {
-    //                         columns[col_name].push_back(value);
-    //                         column_types[col_name] = typeid(std::string);
-    //                     }
-    //                 }
-    //                 else
-    //                 {
-    //                     columns[col_name].push_back(value);
-    //                     column_types[col_name] = typeid(std::string);
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     file.close();
-    // }
 
     // namespace
 }

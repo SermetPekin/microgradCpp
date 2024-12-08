@@ -27,7 +27,7 @@
 
 #pragma once
 #include <iomanip>
-
+#include <numeric>
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
@@ -40,13 +40,20 @@
 #include <typeindex>
 #include <typeinfo> //   typeid
 // #include "../extern/nlohmann/json.hpp"
-#include "series.hpp"
-#include "header.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <optional>
 #include <typeindex>
 #include <typeinfo>
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <variant>
+#include "series.hpp"
+#include "header.hpp"
+#include "range.hpp"
+#include "console_utils.hpp"
 
 namespace microgradCpp
 
@@ -61,7 +68,6 @@ namespace microgradCpp
     class DataFrame
     {
     public:
-        // void from_csv(const std::string &filename, bool has_header , char delimiter  );
         void from_csv(const std::string &filename, bool has_header = true, char delimiter = ',');
 
         std::unordered_map<std::string, Column> columns;
@@ -69,6 +75,157 @@ namespace microgradCpp
         std::unordered_map<std::string, std::unordered_map<std::string, int>> encoding_mappings;
 
         std::vector<std::string> column_order;
+
+        static inline bool DEFAULT_INPLACE = true;
+
+        DataFrame operator()(const std::initializer_list<int> &row_indices, const std::vector<std::string> &col_names)
+        {
+            return this->slice(std::vector<size_t>(row_indices.begin(), row_indices.end()), col_names, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()(const std::initializer_list<int> &row_indices)
+        {
+            return this->slice(std::vector<size_t>(row_indices.begin(), row_indices.end()), column_order, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()(const Range &range, const std::vector<std::string> &col_names)
+        {
+
+            auto numbers = range.to_vector<size_t>();
+
+            return this->slice(numbers, col_names, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()(const Range &range)
+        {
+
+            auto numbers = range.to_vector<size_t>();
+
+            return this->slice(numbers, column_order, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names)
+        {
+            return this->slice(get_all_row_indices(), column_order, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()()
+        {
+
+            return this->slice(get_all_row_indices(), column_order, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()(const std::vector<size_t> &row_indices)
+        {
+            return this->slice(row_indices, column_order, DEFAULT_INPLACE);
+        }
+
+        DataFrame operator()(const std::vector<std::string> &col_names)
+        {
+
+            return this->slice(get_all_row_indices(), col_names, DEFAULT_INPLACE);
+        }
+
+        DataFrame cols(const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
+        {
+
+            return this->slice(get_all_row_indices(), col_names, inplace);
+        }
+        // void slice_inplace(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names)
+        // {
+        //     *this = this->slice(row_indices, col_names);
+        // }
+
+        // DataFrame slice_nodiscard(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names)
+        // {
+        //     return this->slice(row_indices, col_names);
+        // }
+
+        // DataFrame slice(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
+        // {
+        //     if (!inplace)
+        //     {
+        //         return slice_nodiscard(row_indices, col_names);
+        //     }
+        //      slice_inplace(row_indices, col_names);
+        // }
+
+        DataFrame slice(const std::vector<size_t> &row_indices, const std::vector<std::string> &col_names, bool inplace = DEFAULT_INPLACE)
+        {
+
+            size_t num_rows = columns.empty() ? 0 : columns.begin()->second.size();
+            for (size_t row_idx : row_indices)
+            {
+                if (row_idx >= num_rows)
+                {
+
+                    epic_failure_exit("Row index " + std::to_string(row_idx) + " is out of bounds. DataFrame has " + std::to_string(num_rows) + " rows.");
+
+                    throw std::out_of_range("Row index " + std::to_string(row_idx) + " is out of bounds. DataFrame has " + std::to_string(num_rows) + " rows.");
+                }
+            }
+
+            std::unordered_map<std::string, Column> new_columns;
+            std::unordered_map<std::string, std::optional<std::type_index>> new_column_types;
+            std::unordered_map<std::string, std::unordered_map<std::string, int>> new_encoding_mappings;
+
+            for (const auto &col_name : col_names)
+            {
+                if (columns.find(col_name) == columns.end())
+                {
+                    throw std::invalid_argument("Column " + col_name + " not found");
+                }
+
+                Column new_col;
+                for (const auto &row_idx : row_indices)
+                {
+                    if (row_idx >= columns.at(col_name).size())
+                    {
+                        throw std::out_of_range("Row index out of range");
+                    }
+                    new_col.push_back(columns.at(col_name)[row_idx]);
+                }
+
+                new_columns[col_name] = std::move(new_col);
+                new_column_types[col_name] = column_types.at(col_name);
+
+                if (encoding_mappings.find(col_name) != encoding_mappings.end())
+                {
+                    new_encoding_mappings[col_name] = encoding_mappings.at(col_name);
+                }
+            }
+
+            if (inplace)
+            {
+                columns = std::move(new_columns);
+                column_types = std::move(new_column_types);
+                encoding_mappings = std::move(new_encoding_mappings);
+                column_order = col_names;
+                return *this;
+            }
+            else
+            {
+                DataFrame result;
+                result.columns = std::move(new_columns);
+                result.column_types = std::move(new_column_types);
+                result.encoding_mappings = std::move(new_encoding_mappings);
+                result.column_order = col_names;
+                return result;
+            }
+        }
+
+        DataFrame()
+        {
+        }
+        DataFrame copy() const
+        {
+            DataFrame new_df;
+            new_df.columns = columns;
+            new_df.column_types = column_types;
+            new_df.encoding_mappings = encoding_mappings;
+            new_df.column_order = column_order;
+            return new_df;
+        }
 
         // ............................................................. get_column_names
         std::vector<std::string> get_column_names() const
@@ -330,11 +487,6 @@ namespace microgradCpp
             return "unknown";
         }
 
-#include <iostream>
-#include <iomanip>
-#include <algorithm>
-#include <variant>
-
         void rocking_star_print(size_t n = 10) const
         {
             std::cout << "\n🚀 DataFrame Overview 🚀\n";
@@ -469,7 +621,21 @@ namespace microgradCpp
         //     std::cout << "========================\n\n";
         // }
 
+        void add_column(const std::string &name, const Column &col)
+        {
+            columns[name] = col;
+            column_order.push_back(name);
+        }
+
     private:
+        std::vector<size_t> get_all_row_indices() const
+        {
+            size_t num_rows = columns.empty() ? 0 : columns.begin()->second.size();
+            std::vector<size_t> indices(num_rows);
+            std::iota(indices.begin(), indices.end(), 0);
+            return indices;
+        }
+
         void m_save_csv(const std::string &file_name, std::optional<char> delimiter = std::nullopt)
         {
             save_as_csv(*this, file_name, delimiter);
