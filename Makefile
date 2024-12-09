@@ -29,7 +29,7 @@ TEST_TARGET = test_output
 
 # Compile and run tests with Google Test
 test_only: $(TEST_TARGET)
-	./$(TEST_TARGET) --gtest_fail_fast
+	./$(TEST_TARGET) #--gtest_fail_fast
 
 $(TEST_TARGET): $(TESTS)
 	$(CXX) $(CXXFLAGS) -o $(TEST_TARGET) $(TESTS) $(LDFLAGS)

@@ -22,10 +22,16 @@ THE SOFTWARE.
 */
 #include "value.hpp"
 #include "mlp.hpp"
+#include "types.hpp"
 #include <vector>
 #include <random>
 #include <memory>
 #include <iostream>
+#include <iostream>
+using namespace microgradCpp ; 
+
+
+
 inline std::vector<std::shared_ptr<Value>> softmaxLocal(const std::vector<std::shared_ptr<Value>> &inputs)
 {
     // sum_exp = sum of exp(input)
@@ -45,6 +51,10 @@ inline std::vector<std::shared_ptr<Value>> softmaxLocal(const std::vector<std::s
     }
     return outputs;
 }
+
+
+
+
 class Linear
 {
 public:

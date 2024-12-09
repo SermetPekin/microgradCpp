@@ -22,7 +22,7 @@ int main()
     // Input: 4 features, hidden layers: [7,7], output: 3 classes
     // Define the model and hyperparameters
     // MLP model(4, {10, 10, 3});
-    MLP model(4, {16, 16, 3});
+    MLP model(4, {7, 7, 3});
     auto params = model.parameters();
     double learning_rate = 0.01;
     int epochs; //  = 100;

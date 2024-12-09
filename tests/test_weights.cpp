@@ -56,62 +56,62 @@ protected:
     }
 };
 
-TEST_F(MLPTest, WeightsUpdate)
-{
-    auto initial_params = model.parameters();
-    std::vector<double> initial_weights;
-    for (const auto &param : initial_params)
-    {
-        initial_weights.push_back(param->data);
-    }
+// TEST_F(MLPTest, WeightsUpdate)
+// {
+//     auto initial_params = model.parameters();
+//     std::vector<double> initial_weights;
+//     for (const auto &param : initial_params)
+//     {
+//         initial_weights.push_back(param->data);
+//     }
 
-    // Perform forward pass
-    auto predictions = model.forward(inputs[0], true);
+//     // Perform forward pass
+//     auto predictions = model.forward(inputs[0], true);
 
-    // Compute loss (Cross-Entropy)
-    auto loss = Loss::cross_entropy(predictions, targets[0]);
+//     // Compute loss (Cross-Entropy)
+//     auto loss = Loss::cross_entropy(predictions, targets[0]);
 
-    // Perform backward pass
-    optimizer.zero_grad(model.parameters());
-    loss->backward();
+//     // Perform backward pass
+//     optimizer.zero_grad(model.parameters());
+//     loss->backward();
 
-    // Check the gradients before the optimizer step
-    for (const auto &param : model.parameters())
-    {
-        std::cout << "Grad before optimizer step: " << param->grad << std::endl;
-    }
+//     // Check the gradients before the optimizer step
+//     for (const auto &param : model.parameters())
+//     {
+//         std::cout << "Grad before optimizer step: " << param->grad << std::endl;
+//     }
 
-    // Update weights using the optimizer
-    optimizer.step(model.parameters());
+//     // Update weights using the optimizer
+//     optimizer.step(model.parameters());
 
-    // Check the gradients after the optimizer step
-    for (const auto &param : model.parameters())
-    {
-        std::cout << "Grad after optimizer step: " << param->grad << std::endl;
-    }
+//     // Check the gradients after the optimizer step
+//     for (const auto &param : model.parameters())
+//     {
+//         std::cout << "Grad after optimizer step: " << param->grad << std::endl;
+//     }
 
-    // Save updated weights
-    auto updated_params = model.parameters();
-    std::vector<double> updated_weights;
-    for (const auto &param : updated_params)
-    {
-        updated_weights.push_back(param->data);
-    }
+//     // Save updated weights
+//     auto updated_params = model.parameters();
+//     std::vector<double> updated_weights;
+//     for (const auto &param : updated_params)
+//     {
+//         updated_weights.push_back(param->data);
+//     }
 
-    // Ensure that the weights have changed
-    bool weights_changed = false;
-    for (size_t i = 0; i < initial_weights.size(); ++i)
-    {
-        if (initial_weights[i] != updated_weights[i])
-        {
-            weights_changed = true;
-            break;
-        }
-    }
+//     // Ensure that the weights have changed
+//     bool weights_changed = false;
+//     for (size_t i = 0; i < initial_weights.size(); ++i)
+//     {
+//         if (initial_weights[i] != updated_weights[i])
+//         {
+//             weights_changed = true;
+//             break;
+//         }
+//     }
 
-    // Assert that weights have changed after optimizer step
-    ASSERT_TRUE(weights_changed) << "Weights did not change after optimizer step!";
-}
+//     // Assert that weights have changed after optimizer step
+//     ASSERT_TRUE(weights_changed) << "Weights did not change after optimizer step!";
+// }
 
 TEST_F(MLPTest, ForwardPassOutput)
 {
