@@ -24,37 +24,82 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-
 #include "value.hpp"
 #include <vector>
 #include <memory>
+#include "value.hpp"
+#include <vector>
+#include <memory>
+#include <unordered_map>
 
-class SGD {
+class BaseOptimizer
+{
 public:
-    double lr; // Learning rate
+    double lr;
     double momentum;
+    std::unordered_map<Value *, double> velocity;
 
-//    explicit SGD(double learning_rate) : lr(learning_rate) {}
-    explicit SGD(double learning_rate, double momentum_factor = 0.0)
+    explicit BaseOptimizer(double learning_rate, double momentum_factor = 0.0)
         : lr(learning_rate), momentum(momentum_factor) {}
 
-void step(const std::vector<std::shared_ptr<Value>>& parameters) {
-    for (auto& param : parameters) {
-        if (param->grad != 0.0) { // Skip if gradient is zero
-            param->data -= lr * param->grad; // Gradient descent step
-        }
-    }
-}
+    virtual void step(const std::vector<std::shared_ptr<Value>> &parameters) = 0;
 
-
-
-
-     
-    void zero_grad(const std::vector<std::shared_ptr<Value>>& parameters) {
-        for (auto& param : parameters) {
-            param->grad = 0.0; // Reset gradients to zero
+    void zero_grad(const std::vector<std::shared_ptr<Value>> &parameters)
+    {
+        for (auto &param : parameters)
+        {
+            param->grad = 0.0;
         }
     }
 };
+
+class SGD : public BaseOptimizer
+{
+public:
+    using BaseOptimizer::BaseOptimizer;
+
+    void step(const std::vector<std::shared_ptr<Value>> &parameters) override
+    {
+        for (auto &param : parameters)
+        {
+            if (param->grad != 0.0)
+            {
+                if (velocity.find(param.get()) == velocity.end())
+                {
+                    velocity[param.get()] = 0.0;
+                }
+
+                velocity[param.get()] = momentum * velocity[param.get()] - lr * param->grad;
+                param->data += velocity[param.get()];
+            }
+        }
+    }
+};
+
+class NesterovSGD : public BaseOptimizer
+{
+public:
+    using BaseOptimizer::BaseOptimizer;
+
+    void step(const std::vector<std::shared_ptr<Value>> &parameters) override
+    {
+        for (auto &param : parameters)
+        {
+            if (param->grad != 0.0)
+            {
+                if (velocity.find(param.get()) == velocity.end())
+                {
+                    velocity[param.get()] = 0.0;
+                }
+
+                double prev_velocity = velocity[param.get()];
+                velocity[param.get()] = momentum * velocity[param.get()] - lr * param->grad;
+                param->data += -momentum * prev_velocity + (1 + momentum) * velocity[param.get()];
+            }
+        }
+    }
+};
+
+ 
 
 #endif // OPTIMIZER_HPP

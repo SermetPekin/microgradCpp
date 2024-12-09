@@ -211,20 +211,31 @@ TEST_F(MLPTest, SingleDataPoint)
 //     }
 // }
 
-// TEST_F(MLPTest, TrainingLoopConvergence2) {
+ 
+
+// TEST_F(MLPTest, TrainingLoopConvergenceAdam)
+// {
 //     double previous_loss = std::numeric_limits<double>::max();
-//     for (int epoch = 0; epoch < 10; ++epoch) {
+
+//     std::vector<std::shared_ptr<Value>> params = model.parameters();
+
+//     AdamOptimizer adam_optimizer(model.parameters(), 0.01);
+
+//     for (int epoch = 0; epoch < 10; ++epoch)
+//     {
 //         auto predictions = model.forward(inputs[0], true);
 //         auto loss = Loss::cross_entropy(predictions, targets[0]);
 
 //         std::cout << "Epoch " << epoch + 1 << ": Loss = " << loss->data << std::endl;
 
-//         optimizer.zero_grad(model.parameters());
+//         adam_optimizer.zero_grad( );
 //         loss->backward();
-//         optimizer.step(model.parameters());
+//         // adam_optimizer.step(model.parameters());
+//         adam_optimizer.step( );
 
 //         // Verify weight updates
-//         for (const auto& param : model.parameters()) {
+//         for (const auto &param : model.parameters())
+//         {
 //             std::cout << "Weight: " << param->data << ", Grad: " << param->grad << std::endl;
 //         }
 
@@ -232,34 +243,3 @@ TEST_F(MLPTest, SingleDataPoint)
 //         previous_loss = loss->data;
 //     }
 // }
-
-TEST_F(MLPTest, TrainingLoopConvergenceAdam)
-{
-    double previous_loss = std::numeric_limits<double>::max();
-
-    std::vector<std::shared_ptr<Value>> params = model.parameters();
-
-    AdamOptimizer adam_optimizer(model.parameters(), 0.01);
-
-    for (int epoch = 0; epoch < 10; ++epoch)
-    {
-        auto predictions = model.forward(inputs[0], true);
-        auto loss = Loss::cross_entropy(predictions, targets[0]);
-
-        std::cout << "Epoch " << epoch + 1 << ": Loss = " << loss->data << std::endl;
-
-        adam_optimizer.zero_grad( );
-        loss->backward();
-        // adam_optimizer.step(model.parameters());
-        adam_optimizer.step( );
-
-        // Verify weight updates
-        for (const auto &param : model.parameters())
-        {
-            std::cout << "Weight: " << param->data << ", Grad: " << param->grad << std::endl;
-        }
-
-        ASSERT_LT(loss->data, previous_loss) << "Loss did not decrease in epoch " << epoch + 1;
-        previous_loss = loss->data;
-    }
-}

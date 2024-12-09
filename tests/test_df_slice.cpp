@@ -35,7 +35,7 @@ using namespace microgradCpp;
 
 using namespace sptest;
 
-// Helper function to create a sample DataFrame
+ 
 DataFrame create_sample_dataframe()
 {
     // DataFrame df;
@@ -57,7 +57,7 @@ DataFrame create_sample_dataframe()
     return df;
 }
 
-// Test valid slicing with specific rows and columns
+ 
 TEST(DataFrameTest, ValidSliceWithInitializerList)
 {
     DataFrame df = create_sample_dataframe();
@@ -66,7 +66,7 @@ TEST(DataFrameTest, ValidSliceWithInitializerList)
     });
 }
 
-// Test out-of-bounds slicing with specific rows and columns
+ 
 TEST(DataFrameTest, OutOfBoundsSliceWithInitializerList)
 {
     DataFrame df = create_sample_dataframe();
@@ -82,14 +82,14 @@ TEST(DataFrameTest, ValidSliceWithRange)
     });
 }
 
-// Test out-of-bounds slicing with Range
+ 
 TEST(DataFrameTest, OutOfBoundsSliceWithRange)
 {
     DataFrame df = create_sample_dataframe();
     EXPECT_THROW({ df(Range(20), {"species"}).print(); }, std::out_of_range);
 }
 
-// Test slicing with Range and all columns
+//   Range and all columns
 TEST(DataFrameTest, ValidSliceWithRangeAllColumns)
 {
     DataFrame df = create_sample_dataframe();
@@ -98,7 +98,7 @@ TEST(DataFrameTest, ValidSliceWithRangeAllColumns)
     });
 }
 
-// Test out-of-bounds Range with all columns
+//   out-of-bounds Range with all columns
 TEST(DataFrameTest, OutOfBoundsRangeAllColumns)
 {
     DataFrame df = create_sample_dataframe();

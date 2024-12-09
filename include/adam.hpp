@@ -27,11 +27,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 // */
-class AdamOptimizer
-{
-    /*
-    arXiv preprint arXiv:1412.6980 , Diederik P Kingma, Jimmy Ba
 
+ /*
+  
         Adam maintains two moving averages for each parameter:
 
         First Moment Estimate (Mean):
@@ -54,6 +52,9 @@ class AdamOptimizer
 
 
     */
+class AdamOptimizer
+{
+   
 public:
     double lr;      // Learning rate
     double beta1;   // Exponential decay rate for the first moment
@@ -81,30 +82,30 @@ public:
         }
     }
 
-    // Step function to update parameters
+    
     void step()
     {
-        t++; // Increment time step
+        t++; //   time step
         for (auto &param : params)
         {
             double g = param->grad; // Gradient of the parameter
 
-            // Update first moment estimate (mean)
+            //   first moment estimate (mean)
             m[param.get()] = beta1 * m[param.get()] + (1.0 - beta1) * g;
 
-            // Update second moment estimate (uncentered variance)
+            //   second moment estimate (uncentered variance)
             v[param.get()] = beta2 * v[param.get()] + (1.0 - beta2) * g * g;
 
             // Compute bias-corrected estimates
             double m_hat = m[param.get()] / (1.0 - std::pow(beta1, t));
             double v_hat = v[param.get()] / (1.0 - std::pow(beta2, t));
 
-            // Update parameter
+         
             param->data -= lr * m_hat / (std::sqrt(v_hat) + epsilon);
         }
     }
 
-    // Zero gradients for the next step
+ 
     void zero_grad()
     {
         for (auto &param : params)

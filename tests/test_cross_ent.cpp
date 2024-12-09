@@ -15,15 +15,15 @@ inline std::shared_ptr<Value> make_value(double data)
 TEST(LossTest, CrossEntropyLoss)
 {
     std::vector<std::shared_ptr<Value>> predictions = {
-        make_value(0.7), // Class 0
-        make_value(0.2), // Class 1
-        make_value(0.1)  // Class 2
+        make_value(0.7),  
+        make_value(0.2),  
+        make_value(0.1)   
     };
 
     std::vector<std::shared_ptr<Value>> targets = {
-        make_value(0.0), // Class 0
-        make_value(1.0), // Class 1 (correct class)
-        make_value(0.0)  // Class 2
+        make_value(0.0),  
+        make_value(1.0),  
+        make_value(0.0)   
     };
 
     auto loss = Loss::cross_entropy(predictions, targets);

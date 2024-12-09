@@ -51,20 +51,20 @@ using vv_double = std::vector<std::vector<double>>;
 
 inline 
 void display_data(const ColRows& inputs, const ColRows& targets, const std::vector<std::string>& column_names ) {
-    // Print column headers
+    //   column headers
     for (const auto& col_name : column_names) {
         std::cout << std::setw(15) << std::left << col_name;
     }
     std::cout << std::setw(15) << std::left << "target";
     std::cout << "\n";
 
-    // Print separator line
+    //   separator line
     for (size_t i = 0; i < column_names.size() + 1; ++i) {
         std::cout << std::setw(15) << std::setfill('-') << "" << std::setfill(' ');
     }
     std::cout << "\n";
 
-    // Print rows of data
+    //   rows of data
     for (size_t i = 0; i < inputs.size(); ++i) {
         for (const auto& value : inputs[i]) {
             std::cout << std::setw(15) << std::left << value->data;
@@ -78,7 +78,7 @@ void display_data(const ColRows& inputs, const ColRows& targets, const std::vect
         std::cout << "\n";
     }
 
-    // Print final separator line
+     
     std::cout << "========================\n";
 }
 
@@ -105,7 +105,7 @@ inline void write_to_csv(const std::vector<std::vector<T>> &data, const std::str
 {
     std::ofstream file(filename);
 
-    // Check if the file is open
+ 
     if (!file.is_open())
     {
         std::cerr << "Error: Could not open file " << filename << " for writing.\n";
@@ -195,7 +195,7 @@ inline vv_double convert_to_double_with_encoding(const vv_string &data, bool has
             }
         }
 
-        // Encode the target column using the encoding map
+        
         std::string target_value = data[i].back();
         if (target_encoding_map.find(target_value) == target_encoding_map.end())
         {
