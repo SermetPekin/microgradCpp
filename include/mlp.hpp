@@ -1,20 +1,17 @@
+
 #ifndef MLP_HPP
 #define MLP_HPP
 /*
 MIT License
-
 Copyright (c) [2024] Sermet Pekin
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,14 +20,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 #include "linear.hpp"
 #include <vector>
 #include <memory>
 #include <cmath>
 #include <random>
 #include <iostream>
-
 inline std::vector<std::shared_ptr<Value>> leaky_relu(const std::vector<std::shared_ptr<Value>> &inputs)
 {
     std::vector<std::shared_ptr<Value>> outputs;
@@ -47,9 +42,7 @@ inline std::vector<std::shared_ptr<Value>> leaky_relu(const std::vector<std::sha
     }
     return outputs;
 }
-
 // ReLU Act. Func.
-
 inline std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_ptr<Value>> &inputs)
 {
     std::vector<std::shared_ptr<Value>> outputs;
@@ -74,21 +67,16 @@ inline std::vector<std::shared_ptr<Value>> relu(const std::vector<std::shared_pt
     }
     return outputs;
 }
-
 // Dropout
-
 inline std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared_ptr<Value>> &inputs, double rate, bool training)
 {
     if (!training)
     {
-
         return inputs;
     }
-
     std::random_device rd;
     std::mt19937 gen(rd());
     std::bernoulli_distribution drop_dist(1.0 - rate);
-
     std::vector<std::shared_ptr<Value>> outputs;
     for (auto &input : inputs)
     {
@@ -112,9 +100,7 @@ inline std::vector<std::shared_ptr<Value>> dropout(const std::vector<std::shared
     }
     return outputs;
 }
-
 // Softmax Activation Function
-
 inline std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared_ptr<Value>> &inputs)
 {
     // sum_exp = sum of exp(input)
@@ -124,7 +110,6 @@ inline std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared
         auto e = inp->exp(); // e = exp(inp)
         sum_exp = sum_exp + e;
     }
-
     // each output = exp(input) / sum_exp
     std::vector<std::shared_ptr<Value>> outputs;
     for (auto &inp : inputs)
@@ -135,38 +120,29 @@ inline std::vector<std::shared_ptr<Value>> softmax(const std::vector<std::shared
     }
     return outputs;
 }
-
 class MLP
-{
-
+{ /* TODO options object */
     int _in_features;
     std::vector<int> _layer_sizes;
 
 public:
     std::vector<std::shared_ptr<Linear>> layers;
-
     int input_size() const
     {
-
-        return _in_features;
+        return _in_features; //  4 , {  10,10, 3 } => 4
     }
     int output_size() const
     {
-
-        return _layer_sizes.size();
+        return _layer_sizes.back(); //  4 , {  10,10, 3 } => 3
     }
     std::vector<int> get_layer_sizes() const
     {
-
         return _layer_sizes;
     }
-
     MLP(int in_features, const std::vector<int> &layer_sizes)
     {
-
         _in_features = in_features;
         _layer_sizes = layer_sizes;
-
         int current_in = in_features;
         for (int size : layer_sizes)
         {
@@ -174,15 +150,12 @@ public:
             current_in = size;
         }
     }
-
     std::vector<std::shared_ptr<Value>> forward(const std::vector<std::shared_ptr<Value>> &inputs, bool training = true)
     {
-
         if (inputs.empty())
         {
             throw std::runtime_error("Empty input provided to MLP forward pass.");
         }
-
         auto activations = inputs;
         for (size_t i = 0; i < layers.size(); ++i)
         {
@@ -199,7 +172,6 @@ public:
         // Apply softmax to the final layer's output
         return softmax(activations);
     }
-
     std::vector<std::shared_ptr<Value>> parameters() const
     {
         std::vector<std::shared_ptr<Value>> params;
@@ -211,5 +183,4 @@ public:
         return params;
     }
 };
-
 #endif // MLP_HPP
