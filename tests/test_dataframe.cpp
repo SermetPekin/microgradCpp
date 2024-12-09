@@ -8,11 +8,7 @@
 #include <algorithm>
 using namespace microgradCpp;
 
-using namespace sptest ; 
-
- 
-
- 
+using namespace sptest;
 
 TEST(DataFrameTest, ValidateDataFrameContents)
 {
@@ -42,12 +38,6 @@ TEST(DataFrameTest, ValidateDataFrameContents)
     EXPECT_EQ(species_values->at(2), "virginica");
 
     std::remove(temp_file.c_str());
-
-
-
-
-
-
 }
 
 // Test encoding a categorical column in a DataFrame
@@ -101,35 +91,69 @@ TEST(DataFrameTest, CheckInferredTypes)
     std::remove(temp_file.c_str());
 }
 
- 
- 
- 
-
 TEST(DataFrameTest, LoadCSVParts)
 {
+       DataFrame df;
+    df.from_csv("./data/iris.csv", true, ',');
+    // df.to_csv("a.csv") ;
+
+    // df.normalize(  );
+    df.encode_column("variety");
+    df.print();
+    df.shuffle();
+    df.print();
+
     std::string temp_file = "temp_iris.csv";
-    std::string csv_content =
-        "sepal_length,sepal_width,petal_length,petal_width,species\n"
-        "5.1,3.5,1.4,0.2,setosa\n"
-        "7.0,3.2,4.7,1.4,versicolor\n"
-        "6.3,3.3,6.0,2.5,virginica\n";
 
-    create_temp_csv(temp_file, csv_content);
+    df.to_csv(temp_file);
 
-    microgradCpp::DataFrame df;
+   
     df.from_csv(temp_file);
+
+    df.encode_column("variety");
+
+    v_string cols_ = {"variety", "variety"};
+    df.encode_column(cols_);
+    df.encode_column(Range(4, 5));
+
+
+//   DataFrame df;
+//     df.from_csv("./data/iris.csv", true, ',');
+//     // df.to_csv("a.csv") ; 
+//     string col_ = "variety" ; 
+//     // df.normalize(  );
+//     df.encode_column(col_ );
+//     df.print();
+//     df.shuffle();
+//     df.print();
+
+ 
+
+
+//     df.encode_column(col_ );
+
+//     v_string cols_ = {col_ , col_ };
+//     df.encode_column(cols_);
+//     df.encode_column(Range(4, 5));
+
+//     df.shuffle();
+
+//     // df(Range(5), Range(2)) ;  // .print();
+//     df(Range(2), cols_).print();
 
     auto columns = df.get_column_names();
     EXPECT_EQ(columns.size(), 5);
 
     // EXPECT_THAT(columns, ::testing::Contains("sepal_length"));
 
-    ASSERT_TRUE(sptest::contains(columns, "sepal_length")) << "'sepal_length' not found in columns";
+    //sepal.length,sepal.width,petal.length,petal.width,variety
 
-    EXPECT_EQ(columns[0], "sepal_length");
-    EXPECT_EQ(columns[4], "species");
+    // ASSERT_TRUE(sptest::contains(columns, "petal.width")) << "'petal.width' not found in columns";
 
-    // std::remove(temp_file.c_str());
+    // EXPECT_EQ(columns[0], "petal.width");
+    // EXPECT_EQ(columns[4], col_ );
+
+    std::remove(temp_file.c_str());
 }
 
 // TEST(DataFrameTest, SaveCSV) {

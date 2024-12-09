@@ -29,9 +29,11 @@ THE SOFTWARE.
 #include "value.hpp"
 namespace microgradCpp
 {
+    using string = std::string;
     using v_string = std::vector<std::string>;
     using vv_string = std::vector<std::vector<std::string>>;
 
+  
     using v_double = std::vector<double>;
     using vv_double = std::vector<std::vector<double>>;
 
