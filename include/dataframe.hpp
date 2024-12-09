@@ -42,14 +42,11 @@
 // #include "../extern/nlohmann/json.hpp"
 
 #include <fstream>
-#include <iostream>
-#include <optional>
 #include <typeindex>
-#include <typeinfo>
-#include <iostream>
 #include <iomanip>
 #include <algorithm>
-#include <variant>
+
+
 #include "series.hpp"
 #include "header.hpp"
 #include "range.hpp"
@@ -452,19 +449,18 @@ namespace microgradCpp
             {
                 throw std::runtime_error("Cannot shuffle an empty DataFrame.");
             }
-
-            // Get the number of rows
+ 
             size_t num_rows = columns.begin()->second.size();
 
-            // Create a vector of indices representing row positions
+            //   a vector of indices representing row positions
             std::vector<size_t> indices(num_rows);
             std::iota(indices.begin(), indices.end(), 0);
 
-            // Seed the random number generator
+            //   the random number generator
             unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
             std::shuffle(indices.begin(), indices.end(), std::default_random_engine(seed));
 
-            // Create new columns with shuffled rows
+            //   new columns with shuffled rows
             std::unordered_map<std::string, Column> shuffled_columns;
 
             for (const auto &col_name : column_order)
@@ -540,22 +536,7 @@ namespace microgradCpp
             }
         }
 
-        // void normalize(DataFrame &df)
-        // {
-        //     for (const auto &col_name : df.column_order)
-        //     {
-        //         auto col = df[col_name];
-        //         double mean = std::accumulate(col.begin(), col.end(), 0.0) / col.size();
-        //         double std_dev = std::sqrt(std::accumulate(col.begin(), col.end(), 0.0,
-        //                                                    [mean](double acc, double val)
-        //                                                    { return acc + (val - mean) * (val - mean); }) /
-        //                                    col.size());
-        //         for (auto &val : col)
-        //         {
-        //             val = (val - mean) / std_dev;
-        //         }
-        //     }
-        // }
+        
 
         void show()
         {
@@ -736,79 +717,9 @@ namespace microgradCpp
             std::cout << "========================\n\n";
         }
 
-        // Rocking start print method
-        // void rocking_star_printBackup(size_t n = 10) const
-        // {
-        //     std::cout << "\n🚀 DataFrame Overview 🚀\n";
-        //     std::cout << "========================\n";
-
-        //     // Display shape
-        //     size_t num_rows = 0;
-        //     if (!columns.empty())
-        //     {
-        //         num_rows = columns.begin()->second.size();
-        //     }
-        //     std::cout << "📝 Shape: (" << num_rows << " rows, " << columns.size() << " columns)\n";
-
-        //     // Display column names and types
-        //     std::cout << "\n🧩 Columns and Data Types:\n";
-        //     std::cout << "---------------------------\n";
-        //     for (const auto &[name, col] : columns)
-        //     {
-        //         std::cout << "🔹 " << std::setw(15) << std::left << name << " | [" << get_type_string(name) << "]\n";
-        //     }
-
-        //     // Display first 'n' rows
-        //     std::cout << "\n🔍 First " << n << " Rows:\n";
-        //     std::cout << "---------------------------\n";
-
-        //     // Print column headers
-        //     for (const auto &[name, _] : columns)
-        //     {
-        //         std::cout << std::setw(15) << std::left << name;
-        //     }
-        //     std::cout << "\n";
-
-        //     // Print separator line
-        //     for (size_t i = 0; i < columns.size(); ++i)
-        //     {
-        //         std::cout << std::setw(15) << std::setfill('-') << "" << std::setfill(' ');
-        //     }
-        //     std::cout << "\n";
-
-        //     // Print rows
-        //     for (size_t row = 0; row < std::min(n, num_rows); ++row)
-        //     {
-        //         for (const auto &[_, col] : columns)
-        //         {
-        //             if (row < col.size())
-        //             {
-        //                 std::visit([](const auto &value)
-        //                            {
-        //                     using T = std::decay_t<decltype(value)>;
-        //                     if constexpr (std::is_same_v<T, std::monostate>) {
-        //                         std::cout << std::setw(15) << "NaN";
-        //                     } else {
-        //                         std::cout << std::setw(15) << value;
-        //                     } }, col[row]);
-        //             }
-        //             else
-        //             {
-        //                 std::cout << std::setw(15) << "NaN";
-        //             }
-        //         }
-        //         std::cout << "\n";
-        //     }
-
-        //     std::cout << "========================\n\n";
-        // }
-
-        // void add_column(const std::string &name, const Column &col)
-        // {
-        //     columns[name] = col;
-        //     column_order.push_back(name);
-        // }
-
+        
+        
+ 
         void add_column(const std::string &name, const Column &col, std::optional<std::type_index> type = std::nullopt)
         {
             columns[name] = col;
