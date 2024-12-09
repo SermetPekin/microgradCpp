@@ -41,9 +41,9 @@ inline DatasetType convert_to_dataset(const vv_double &data, int target_column =
             continue; // Skip empty rows
         }
 
-        // Determine target column index
+        //   target column index
         int target_idx = (target_column == -1) ? row.size() - 1 : target_column;
-        // Create inputs and targets
+        //   inputs and targets
         std::vector<std::shared_ptr<Value>> inputs;
         std::vector<std::shared_ptr<Value>> targets;
         for (size_t i = 0; i < row.size(); ++i)
@@ -58,7 +58,7 @@ inline DatasetType convert_to_dataset(const vv_double &data, int target_column =
             }
         }
 
-        // Add the pair to the dataset
+    
         dataset.emplace_back(inputs, targets);
     }
 
@@ -75,12 +75,12 @@ inline DatasetType convert_to_dataset(const DataFrame &df, int target_column = -
     {
         if (row.empty())
         {
-            continue; // Skip empty rows
+            continue;  
         }
 
-        // Determine target column index
+        
         int target_idx = (target_column == -1) ? row.size() - 1 : target_column;
-        // Create inputs and targets
+      
         std::vector<std::shared_ptr<Value>> inputs;
         std::vector<std::shared_ptr<Value>> targets;
         for (size_t i = 0; i < row.size(); ++i)
@@ -95,7 +95,7 @@ inline DatasetType convert_to_dataset(const DataFrame &df, int target_column = -
             }
         }
 
-        // Add the pair to the dataset
+ 
         dataset.emplace_back(inputs, targets);
     }
 
@@ -118,7 +118,7 @@ inline void write_dataset_to_csv(const DatasetType &dataset, const std::string &
         return;
     }
 
-    // Write the header
+    //   the header
     size_t num_features = dataset[0].first.size();
     for (size_t i = 0; i < num_features; ++i)
     {
@@ -126,19 +126,19 @@ inline void write_dataset_to_csv(const DatasetType &dataset, const std::string &
     }
     file << "Target" << std::endl;
 
-    // Write the data
+    //   the data
     for (const auto &sample : dataset)
     {
         const auto &features = sample.first;
         const auto &targets = sample.second;
 
-        // Write features
+        //   features
         for (const auto &feature : features)
         {
             file << feature->data << ",";
         }
 
-        // Write target (assuming one target per sample)
+        //   target  
         if (!targets.empty())
         {
             file << targets[0]->data;
