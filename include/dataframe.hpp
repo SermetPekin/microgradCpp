@@ -397,6 +397,7 @@ namespace microgradCpp
             // Replace the original columns with shuffled columns
             columns = shuffled_columns;
         }
+        
         void normalize(const v_string &cols_given = {})
         {
             v_string cols_to_normalize;
