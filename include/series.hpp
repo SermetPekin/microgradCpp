@@ -25,7 +25,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 #pragma once
 #include "header.hpp"
 #include <variant>
@@ -41,13 +40,10 @@
 namespace microgradCpp
 {
     using Cell = std::variant<std::monostate, double, long long, std::string>;
-
     class Series
     {
-
     public:
         Series(std::vector<Cell> data) : data_(std::move(data)) {}
-
         // .................................................................. size
         size_t size() const
         {
@@ -56,7 +52,6 @@ namespace microgradCpp
         void normalize()
         {
             std::vector<double> numeric_values;
-
             // Step 1: Collect numeric values
             for (const auto &cell : data_)
             {
@@ -67,26 +62,22 @@ namespace microgradCpp
                     numeric_values.push_back(static_cast<double>(arg));
                 } }, cell);
             }
-
             if (numeric_values.empty())
             {
                 std::cerr << "No numeric values to normalize." << std::endl;
                 return;
             }
-
             // Step 2: Calculate mean and standard deviation
             double mean = std::accumulate(numeric_values.begin(), numeric_values.end(), 0.0) / numeric_values.size();
             double std_dev = std::sqrt(std::accumulate(numeric_values.begin(), numeric_values.end(), 0.0,
                                                        [mean](double acc, double val)
                                                        { return acc + (val - mean) * (val - mean); }) /
                                        numeric_values.size());
-
             if (std_dev == 0)
             {
                 std::cerr << "Standard deviation is zero; cannot normalize." << std::endl;
                 return;
             }
-
             // Step 3: Normalize numeric cells in data_
             for (auto &cell : data_)
             {
@@ -98,30 +89,24 @@ namespace microgradCpp
                 } }, cell);
             }
         }
-
         // .................................................................. values_internal
         template <typename T>
         std::vector<T> values_internal() const
         {
             std::vector<T> result;
             result.reserve(data_.size());
-
             for (const auto &cell : data_)
             {
                 result.push_back(std::visit([](const auto &value) -> T
                                             { return convert<T>(value); }, cell));
             }
-
             return result;
         }
-
         // .................................................................. values
-
         std::vector<double> values() const
         {
             return values_internal<double>();
         }
-
         // .................................................................. at
         template <typename T>
         T at(size_t index) const
@@ -130,11 +115,9 @@ namespace microgradCpp
             {
                 throw std::out_of_range("Index out of range");
             }
-
             return std::visit([](const auto &value) -> T
                               { return convert<T>(value); }, data_[index]);
         }
-
         // .................................................................. print
         void print() const
         {
@@ -154,7 +137,6 @@ namespace microgradCpp
             }
             std::cout << std::endl;
         }
-
     private:
         std::vector<Cell> data_;
         // .................................................................. convert
@@ -171,22 +153,18 @@ namespace microgradCpp
                 {
                     return std::numeric_limits<double>::quiet_NaN();
                 }
-
                 else if constexpr (std::is_same_v<T, std::optional<long long>>)
                 {
                     return std::nullopt;
                 }
-
                 else if constexpr (std::is_same_v<T, std::string>)
                 {
                     return "NaN";
                 }
-
                 else if constexpr (std::is_same_v<T, std::monostate>)
                 {
                     return "NaN";
                 }
-
                 else
                 {
                     throw std::invalid_argument("Unsupported conversion from monostate");
