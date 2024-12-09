@@ -11,8 +11,10 @@ int main(int argc, char *argv[])
 {
     // DatasetType dataset = get_iris();
     DataFrame df;
-    df.from_csv("./data/wine.csv", true, ';');
-    // df.normalize(  );
+    df.from_csv("./data/iris.csv", true, ';');
+    
+    df.normalize( Range( 5 )  );
+
     df.encode_column("quality");
     df.print();
     df.shuffle();
