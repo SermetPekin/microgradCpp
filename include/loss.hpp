@@ -32,7 +32,7 @@ inline void display_predictions_and_targets(const std::vector<std::shared_ptr<Va
                                             const std::vector<std::shared_ptr<Value>> &targets)
 {
     const int width = 15; // Width for each column
-    std::cout << "\nğŸ“Š Predictions vs Targets\n";
+    std::cout << "\nÄŸÅ¸â€œÅ  Predictions vs Targets\n";
     std::cout << "=============================================\n";
     std::cout << std::setw(width) << "Predictions" << std::setw(width) << "Targets" << "\n";
     std::cout << "---------------------------------------------\n";

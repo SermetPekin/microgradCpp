@@ -27,10 +27,6 @@
  *
  *
  *
-
-
-
-
  */
 #pragma once
 #include <iomanip>
@@ -59,7 +55,6 @@
 #include <algorithm> // For std::shuffle
 #include <random>    // For std::default_random_engine
 #include <chrono>    // For seeding the random engine
-
 namespace microgradCpp
 {
     class DataFrame;
@@ -68,26 +63,21 @@ namespace microgradCpp
     using Column = std::vector<Cell>;
     class DataFrame
     {
-
         /*
         *
         *
         *   @usage :
-
             DataFrame df;
             df.from_csv("./data/wine.csv", true, ';');
-
             df.normalize();
             df.normalize(Range(2,5)); // columns between 2 and 4
             df.normalize(Range(5)); //   first 5 columns {0,1,2,3,4 }
-
             df.encode_column("quality"); // one hot encoding for column name 'quality'
-            df.encode_column( {"quality"  } ); // one hot encoding for column name 'quality'
+            df.encode_column( columns ); // one hot encoding for column names
             df.encode_column(Range(5 ) ); // one hot encoding for  first 5 columns
             df.print();
             df.shuffle();
             df.print();
-
         */
     public:
         void from_csv(const std::string &filename, bool has_header = true, char delimiter = ',');
@@ -113,13 +103,10 @@ namespace microgradCpp
             auto numbers = range.to_vector<size_t>();
             return this->slice(numbers, col_names, DEFAULT_INPLACE);
         }
-
         DataFrame operator()(const Range &rows_, const Range &cols_)
         {
             auto numbers = rows_.to_vector<size_t>();
-
             v_string cols_filtered = cols_.filter(column_order);
-
             return this->slice(numbers, cols_filtered, DEFAULT_INPLACE);
         }
         DataFrame rows(const Range &range)
@@ -435,7 +422,6 @@ namespace microgradCpp
             // Replace the original columns with shuffled columns
             columns = shuffled_columns;
         }
-
         void normalize(const v_string &cols_given = {})
         {
             v_string cols_to_normalize;
@@ -569,21 +555,17 @@ namespace microgradCpp
             // Update the column type to double
             column_types[column_name] = typeid(double);
         }
-
         void encode_column(const Range &range)
         {
             v_string columns_ = range.filter(column_order);
             for (const string x : columns_)
                 encode_column(x);
         }
-
         void encode_column(const v_string &columns_)
         {
-
             for (const string x : columns_)
                 encode_column(x);
         }
-
         void print_encoding_map(const std::string &column_name) const
         {
             auto it = encoding_mappings.find(column_name);
@@ -678,7 +660,6 @@ namespace microgradCpp
             column_order.push_back(name);
             column_types[name] = type;
         }
-
     private:
         std::vector<size_t> get_all_row_indices() const
         {

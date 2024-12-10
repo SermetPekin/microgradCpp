@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "header.hpp"
 #include "series.hpp"
 #include "dataframe.hpp"
+#include "dataframe_extended.hpp"
 #include "dataframe_utils.hpp"
 #include "sp_testing_utils.hpp"
 #include "train_eval.hpp"

@@ -124,7 +124,6 @@ class MLP
 { /* TODO options object */
     int _in_features;
     std::vector<int> _layer_sizes;
-
 public:
     std::vector<std::shared_ptr<Linear>> layers;
     int input_size() const
