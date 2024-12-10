@@ -1,3 +1,12 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Sermet Pekin
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files...
+*/
+
 #include <gtest/gtest.h>
 #include "micrograd.hpp" // Assuming Value class is defined in value.hpp
 #include "types.hpp" // Assuming Value class is defined in value.hpp
