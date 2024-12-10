@@ -1,7 +1,16 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Sermet Pekin
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files...
+*/
+
 #include <gtest/gtest.h>
 #include <memory>
 #include "value.hpp"
-#include "sgd.hpp" // Assuming your SGD and NesterovSGD classes are defined here
+#include "sgd.hpp"  
 
 class OptimizerTest : public ::testing::Test {
 protected:
