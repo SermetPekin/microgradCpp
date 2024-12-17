@@ -6,8 +6,8 @@ LDFLAGS = -L/usr/local/lib -lgtest -lgtest_main -pthread
 # CXXFLAGS = -std=c++20 -Iinclude -I/usr/local/include   
 # LDFLAGS = -L/usr/local/lib -lgtest -lgtest_main -pthread   
 
-CXXFLAGS += -fsanitize=address -g
-LDFLAGS += -fsanitize=address
+# CXXFLAGS += -fsanitize=address -g
+# LDFLAGS += -fsanitize=address
 
 
 # Output binary for main program
