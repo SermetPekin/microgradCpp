@@ -20,14 +20,23 @@ inline std::vector<std::shared_ptr<Value>> leaky_relu(const std::vector<std::sha
     std::vector<std::shared_ptr<Value>> outputs;
     for (const auto &val : inputs)
     {
-        if (val->data > 0)
+        double alpha = 0.01; // Leaky ReLU slope for negative inputs
+        double output_data = (val->data > 0) ? val->data : (alpha * val->data);
+        auto out = std::make_shared<Value>(output_data);
+        out->add_parent(val);
+        out->_backward = [val, out, alpha]()
         {
-            outputs.push_back(val);
-        }
-        else
-        {
-            outputs.push_back(std::make_shared<Value>(0.01 * val->data)); // Small negative slope
-        }
+            // d/dx leaky_relu(x) = 1 if x > 0, else alpha
+            if (val->data > 0)
+            {
+                val->grad += out->grad;
+            }
+            else
+            {
+                val->grad += alpha * out->grad;
+            }
+        };
+        outputs.push_back(out);
     }
     return outputs;
 }

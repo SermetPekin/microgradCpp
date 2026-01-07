@@ -127,6 +127,10 @@ public:
     // Logarithm
     std::shared_ptr<Value> log()
     {
+        if (data <= 0.0)
+        {
+            throw std::domain_error("Cannot take log of non-positive value: " + std::to_string(data));
+        }
         auto out = std::make_shared<Value>(std::log(data));
         out->add_parent(shared_from_this());
         out->_backward = [self = shared_from_this(), out]()
@@ -265,7 +269,8 @@ std::shared_ptr<Value> operator-(const std::shared_ptr<Value> &lhs, const T &rhs
 template <typename T>
 std::shared_ptr<Value> operator-(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
-    return rhs - lhs; // Reuse the above operator to avoid duplication
+    std::shared_ptr<Value> lhs_value = std::make_shared<Value>(lhs);
+    return lhs_value - rhs; // Correct order: lhs - rhs
 }
 // ========================================================================
 //    Multiplication
@@ -364,7 +369,7 @@ template <typename T>
 std::shared_ptr<Value> operator/(const T &lhs, const std::shared_ptr<Value> &rhs)
 {
     std::shared_ptr<Value> lhs_value = std::make_shared<Value>(lhs);
-    return rhs / lhs_value; // Reuse the previous operator
+    return lhs_value / rhs; // Correct order: lhs / rhs
 }
 // Division
 // std::shared_ptr<Value> operator/(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {

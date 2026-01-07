@@ -86,8 +86,8 @@ public:
             }
             std::cout << std::endl;
     */
-        // return outputs;
-        return softmaxLocal(outputs);
+        // Return raw logits (no softmax here - MLP will apply softmax to the output layer)
+        return outputs;
     }
     // return softmax(activations);
     // Get all parameters (weights and biases)
