@@ -4,11 +4,7 @@
 
 # MicrogradCpp
 
-**MicrogradCPP** is a C++ library inspired by [Andrej Karpathy’s micrograd](https://github.com/karpathy/micrograd) that provides a small, educational automatic differentiation engine and a simple neural network library on top. 
-
-It’s geared toward understanding backpropagation, building small neural networks, and experimenting with gradient-based learning—entirely in C++.
-
-This project aims to be easy to read and modify, making it a great learning tool for those who want to understand how automatic differentiation, feed-forward neural networks, and basic optimizers work at a low level.
+A C++ implementation of [Andrej Karpathy's micrograd](https://github.com/karpathy/micrograd). Small, educational autodiff engine with neural networks. Good for learning how backprop actually works.
 
 ## Features
 
@@ -25,142 +21,78 @@ This project aims to be easy to read and modify, making it a great learning tool
 ## Getting Started
 
 ### Prerequisites
-- A C++17-compatible compiler (e.g. `g++` >= 7.3, `clang` >= 6.0).
-- CMake (optional) if you use the CMake build approach.
-- The Iris dataset CSV (`iris.csv`) located in `./data/` directory.
 
+- C++17 compiler (`g++` >= 7.3 or `clang` >= 6.0)
+- Iris dataset CSV in `./data/iris.csv`
 
+### Quick Start
 
-```C++ 
-    // main.cpp 
-
+```cpp
 #include "micrograd.hpp"
 using namespace microgradCpp;
 
 int main()
 {
-
     DatasetType dataset = get_iris();
     shuffle(dataset);
-    double TRAIN_SIZE{0.8};
 
-    // Define the model and hyperparameters
-
-    // Create Multi-Layer Perceptron (MLP)
-    // Input: 4 features, hidden layers: [10,10], output: 3 classes
-  
     MLP model(4, {10, 10, 3});
-    double learning_rate = 0.01;
-    int epochs = 100;
-
-    // Train and evaluate the model
-    train_eval(dataset, TRAIN_SIZE, model, learning_rate, epochs);
+    train_eval(dataset, 0.8, model, 0.01, 100);
 
     return 0;
 }
-
 ```
 
-### Building
+### Build
 
-#### Without CMake (Direct g++ Command)
-
-Since it’s header-only, you just compile `main.cpp`:
+**With Make:**
 ```bash
-g++ -std=c++17 -Iinclude -O2 -o main main.cpp
+make run
 ```
-Run the executable:
+
+**With g++:**
 ```bash
-./main
+g++ -std=c++17 -Iinclude -O2 -o main main.cpp && ./main
 ```
-If you placed iris.csv in data/, and main.cpp references ./data/iris.csv, ensure you run ./main from the microgradcpp directory.
 
-
-### 2. Building with Makefile
-
-The project includes a `Makefile` to easily compile and run the code. To build and run the project, follow these steps:
-
-1. **Using `Makefile`:**
-
-   In your project directory, run:
+**With CMake:**
 ```bash
-   make run
-```
-This will compile your code and automatically run the ./main executable.
-### 2. Building with CMake
-
-```bash
-mkdir build
-cd build
-cmake ..
-make
+mkdir build && cd build && cmake .. && make
 ```
 ## Usage
 
-### Defining a Model
-To set up a model, just create an instance of the `MLP` class:
+**Create a model:**
 ```cpp
-MLP model(in_features, {hidden1, hidden2, ..., out_features});
+MLP model(in_features, {hidden1, hidden2, out_features});
+```
 
-````
-This defines a network with a given number of input features and any arrangement of hidden layers, ending with your desired output layer size.
-Training
+**Training:** Forward pass → compute loss → `loss->backward()` → `optimizer.step()`
 
-    Set up an optimizer like SGD.
-    Load your dataset (e.g., Iris) and split it into training and test sets.
-    Run the model’s forward pass to get predictions, compute the loss, and then call loss->backward() to perform backpropagation.
-    Finally, call optimizer.step() to update the model’s parameters.
+**Operations:** Supports `+`, `-`, `*`, `/`, `log`, `exp`, `pow`
 
-Custom Operations
+See `main.cpp` for a complete training example on Iris.
 
-The Value class supports a variety of arithmetic operations (+, -, *, /) and differentiable functions like log, exp, and pow. You can combine these to define custom computations that the model can learn from.
-Example with main.cpp
+## Performance
 
-The provided main.cpp script walks you through the entire process. It:
-
-    Loads and preprocesses the Iris dataset.
-    Shuffles and splits the data into an 80-20 train-test ratio.
-    Defines a simple MLP and trains it with SGD.
-    Prints the training loss at each epoch and the test accuracy at regular intervals.
-
-You can experiment directly by tweaking parameters in main.cpp—for example, changing the network architecture, the learning rate, or the number of epochs. Compile and run with:
-
-## Model Performance and Next Steps
-
-I’ve tested the model on the **Iris dataset**[^1] using an **80-20 train-test split**. The model achieved an average **accuracy of 93%** on the test set.
-
+93% accuracy on Iris dataset (80-20 split)[^1]
 
 [^1]: Fisher, R. (1936). Iris [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C56C76
 
+## Improvements
 
- 
- ## Ways to Improve the Model
+- Tune hyperparameters (learning rate, epochs, layer sizes)
+- Add regularization (dropout, L2 weight decay)
+- Try Adam optimizer
+- Use k-fold cross-validation
+- Feature scaling for other datasets
 
-If you want to push beyond the current 93% benchmark on the Iris dataset, consider these tweaks:
+## Credit
 
-- **Hyperparameters**: Adjust the learning rate, add more layers or neurons, or experiment with different numbers of epochs to see if you can squeeze out better performance.
-- **Regularization**: If the model’s overfitting, try adding dropout or using weight decay (L2 regularization) to help it generalize.
-- **Optimizers**: Sticking to SGD is fine, but you could also try Adam for potentially smoother, faster training.
-- **Cross-Validation and Scaling**: K-fold cross-validation can give you a more reliable performance estimate, and feature scaling may help if you’re applying this model to other, more complex datasets.
-
-### What’s Next?
-
-Right now, the model hits about 93% accuracy on Iris, which is a decent starting point. But this setup is flexible—feel free to run it on different datasets, tweak the architecture, or incorporate more advanced techniques as you get comfortable. Each adjustment helps you understand neural networks a bit more and how to tune them for better results.
-
-And credit where it’s due: Thanks to Andrej Karpathy for the original micrograd concept and the helpful video that inspired this C++ version.
-
-
-
-
+Based on [Andrej Karpathy's micrograd](https://github.com/karpathy/micrograd)
 
 
 <details>
-  <summary>example output</summary>
-
-  **Hidden content:**  
-
-
-example output
+  <summary>Example Training Output</summary>
 ```plaintext
 Loaded 150 samples from ./data/iris.csv
 Epoch 1/100, Loss: 1.10912
