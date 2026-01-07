@@ -86,14 +86,12 @@ See `main.cpp` for a complete training example on Iris.
 - Use k-fold cross-validation
 - Feature scaling for other datasets
 
-## Credit
-
-Based on [Andrej Karpathy's micrograd](https://github.com/karpathy/micrograd)
 
 
 <details>
   <summary>Example Training Output</summary>
-```plaintext
+
+```
 Loaded 150 samples from ./data/iris.csv
 Epoch 1/100, Loss: 1.10912
 Epoch 1: Test Accuracy = 60%
@@ -206,8 +204,8 @@ Epoch 98/100, Loss: 0.231661
 Epoch 99/100, Loss: 0.179442
 Epoch 100/100, Loss: 0.139438
 Epoch 100: Test Accuracy = 93.3333%
-
 ```
+
 </details>
 
 
