@@ -70,7 +70,16 @@ MLP model(in_features, {hidden1, hidden2, out_features});
 
 **Operations:** Supports `+`, `-`, `*`, `/`, `log`, `exp`, `pow`
 
-See `main.cpp` for a complete training example on Iris.
+### Examples
+
+We provide four progressively advanced examples:
+
+- **easy.cpp** - Minimal example with in-memory Iris dataset and SGD
+- **easy_adam.cpp** - Same as easy.cpp but using Adam optimizer
+- **easy_df.cpp** - DataFrame API with CSV loading and data preprocessing
+- **main.cpp** - Complete example with DataFrame, Adam, and interactive configuration
+
+See [EXAMPLES.md](EXAMPLES.md) for detailed walkthroughs of each example and when to use them.
 
 ## Performance
 

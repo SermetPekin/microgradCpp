@@ -1,33 +1,24 @@
-
 /*
  * MIT License
- *
  * Copyright (c) 2024 Sermet Pekin
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files...
-*/
+ *
+ * Simplest example: Load Iris dataset, create and train an MLP with SGD optimizer.
+ * Compile: g++ -std=c++17 -Iinclude -O2 -o easy easy.cpp
+ */
 #include "micrograd.hpp"
 using namespace microgradCpp;
+
 int main()
 {
+    // Load and shuffle the Iris dataset
     DatasetType dataset = get_iris();
     shuffle(dataset);
-    double TRAIN_SIZE{0.8};
-    // Create MLP model
-    // Input: 4 features, hidden layers: [7,7], output: 3 classes
-    // Define the model and hyperparameters
+
+    // Create a simple MLP: 4 inputs -> [10, 10] hidden -> 3 outputs
     MLP model(4, {10, 10, 3});
-    double learning_rate = 0.01;
-    int epochs = 100;
-    // Train and evaluate the model
-    train_eval(dataset, TRAIN_SIZE, model, learning_rate, epochs);
+
+    // Train with SGD optimizer (default)
+    train_eval(dataset, 0.8, model, 0.01, 100);
+
     return 0;
 }
-/*
-Notes
------------
-g++ -std=c++17 -Iinclude -O2 -o main main_easy.cpp
-// or
-make run
-*/
