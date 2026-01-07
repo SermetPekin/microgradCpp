@@ -5,7 +5,7 @@
  * MIT License
  *
  * Copyright (c) 2024 Sermet Pekin
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files...
 */
@@ -20,15 +20,12 @@ using namespace microgradCpp;
 inline void display_predictions_and_targets(const std::vector<std::shared_ptr<Value>> &predictions,
                                             const std::vector<std::shared_ptr<Value>> &targets)
 {
-    const int width = 15; // Width for each column
-    std::cout << "\nÄŸÅ¸â€œÅ  Predictions vs Targets\n";
-    std::cout << "=============================================\n";
-    std::cout << std::setw(width) << "Predictions" << std::setw(width) << "Targets" << "\n";
-    std::cout << "---------------------------------------------\n";
+    const int width = 15;
+    std::cout << "\nPredictions vs Targets\n";
+    std::cout << "Predictions" << std::string(width - 11, ' ') << "Targets\n";
     size_t max_size = std::max(predictions.size(), targets.size());
     for (size_t i = 0; i < max_size; ++i)
     {
-        // Display prediction value or placeholder if out of bounds
         if (i < predictions.size() && predictions[i])
         {
             std::cout << std::setw(width) << predictions[i]->data;
@@ -37,7 +34,6 @@ inline void display_predictions_and_targets(const std::vector<std::shared_ptr<Va
         {
             std::cout << std::setw(width) << "N/A";
         }
-        // Display target value or placeholder if out of bounds
         if (i < targets.size() && targets[i])
         {
             std::cout << std::setw(width) << targets[i]->data;
@@ -48,7 +44,6 @@ inline void display_predictions_and_targets(const std::vector<std::shared_ptr<Va
         }
         std::cout << "\n";
     }
-    std::cout << "=============================================\n";
 }
 class Loss
 {

@@ -264,7 +264,7 @@ namespace microgradCpp
                 num_rows = columns.begin()->second.size();
             }
             size_t num_columns = columns.size();
-            std::cout << "📊 DataFrame Shape: [" << num_rows << " rows x " << num_columns << " columns]\n";
+            std::cout << "DataFrame Shape: [" << num_rows << " rows x " << num_columns << " columns]\n";
         }
         // ............................................................. get_variant_type_index
         std::type_index get_variant_type_index(const Cell &value)
@@ -578,37 +578,27 @@ namespace microgradCpp
         }
         void rocking_star_print(size_t n = 10) const
         {
-            std::cout << "\n🚀 DataFrame Overview 🚀\n";
-            std::cout << "========================\n";
-            // Display shape
             size_t num_rows = 0;
             if (!columns.empty())
             {
                 num_rows = columns.begin()->second.size();
             }
-            std::cout << "📝 Shape: (" << num_rows << " rows, " << columns.size() << " columns)\n";
-            // Display column names and types
-            std::cout << "\n🧩 Columns and Data Types:\n";
-            std::cout << "---------------------------\n";
-            for (const auto &name : column_order)
-            {
-                std::cout << "🔹 " << std::setw(15) << std::left << name << " | [" << get_type_string(name) << "]\n";
-            }
-            // Display first 'n' rows
-            std::cout << "\n🔍 First " << n << " Rows:\n";
-            std::cout << "---------------------------\n";
+            std::cout << "\nDataFrame: " << num_rows << " rows, " << columns.size() << " columns\n";
+
             // Print column headers in the correct order
             for (const auto &name : column_order)
             {
                 std::cout << std::setw(15) << std::left << name;
             }
             std::cout << "\n";
+
             // Print separator line
             for (size_t i = 0; i < column_order.size(); ++i)
             {
                 std::cout << std::setw(15) << std::setfill('-') << "" << std::setfill(' ');
             }
             std::cout << "\n";
+
             // Print rows in the correct order
             for (size_t row = 0; row < std::min(n, num_rows); ++row)
             {
@@ -633,7 +623,6 @@ namespace microgradCpp
                 }
                 std::cout << "\n";
             }
-            std::cout << "========================\n\n";
         }
         void add_column(const std::string &name, const Column &col, std::optional<std::type_index> type = std::nullopt)
         {

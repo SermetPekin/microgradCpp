@@ -65,10 +65,7 @@ inline void train_test_split(const DataFrame &df,
     // size_t train_size = static_cast<size_t>(df.size() * TRAIN_SIZE);
     DatasetType dataset;
     dataset = convert_to_dataset(df);
-    // shuffleLocal(dataset);
     size_t train_size = static_cast<size_t>(dataset.size() * TRAIN_SIZE);
-    std::cout << "train_size : " << train_size;
-    // stop();
     // int num_classes = 10; // TODO
     for (size_t i = 0; i < train_size; ++i)
     {
@@ -169,7 +166,6 @@ inline void train_eval(DatasetType &dataset, double TRAIN_SIZE, MLP &model, Adam
                 }
             }
             double accuracy = static_cast<double>(correct) / test_inputs.size();
-            std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
         }
     }
 }
@@ -231,7 +227,6 @@ inline void train_eval(DataFrame &df, double TRAIN_SIZE, MLP &model, AdamOptimiz
                 }
             }
             double accuracy = static_cast<double>(correct) / test_inputs.size();
-            std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
         }
     }
 }
@@ -297,13 +292,6 @@ inline void train_eval(const DataFrame &df, double train_size, MLP &model, doubl
                 }
             }
             double accuracy = static_cast<double>(correct) / test_inputs.size();
-            std::cout << "Epoch " << epoch + 1 << ": Test Accuracy = " << accuracy * 100.0 << "%" << std::endl;
-            if (epoch == epochs - 1)
-            {
-                auto end = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> duration = end - start;
-                std::cout << "Duration: " << duration.count() << " seconds" << std::endl;
-            }
         }
     }
 }

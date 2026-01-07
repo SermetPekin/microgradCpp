@@ -176,17 +176,15 @@ inline bool validate_dataset_and_model(const DatasetType &dataset, const MLP &mo
         if (inputs.size() != input_size)
         {
             display_header("Input Size Mismatch Detected");
-            std::cerr << "❌ Sample " << i << ": Expected input size "
+            std::cerr << "Sample " << i << ": Expected input size "
                       << input_size << ", but got " << inputs.size() << "\n";
-            std::cerr << "🔹 Input Shape: [" << format_shape(inputs.size(), 1) << "]\n";
             return false;
         }
         if (targets.size() != output_size)
         {
             display_header("Target Size Mismatch Detected");
-            std::cerr << "❌ Sample " << i << ": Expected target size "
+            std::cerr << "Sample " << i << ": Expected target size "
                       << output_size << ", but got " << targets.size() << "\n";
-            std::cerr << "🔸 Target Shape: [" << format_shape(targets.size(), 1) << "]\n";
             return false;
         }
         // Check if inputs are valid (not null)
@@ -195,7 +193,7 @@ inline bool validate_dataset_and_model(const DatasetType &dataset, const MLP &mo
             if (!inputs[j])
             {
                 display_header("Null Input Value Detected");
-                std::cerr << "❌ Sample " << i << ", Feature " << j << ": Null input value\n";
+                std::cerr << "Sample " << i << ", Feature " << j << ": Null input value\n";
                 return false;
             }
         }
@@ -205,13 +203,12 @@ inline bool validate_dataset_and_model(const DatasetType &dataset, const MLP &mo
             if (!targets[j])
             {
                 display_header("Null Target Value Detected");
-                std::cerr << "❌ Sample " << i << ", Target " << j << ": Null target value\n";
+                std::cerr << "Sample " << i << ", Target " << j << ": Null target value\n";
                 return false;
             }
         }
     }
-    std::cout << "✅ All checks passed! Dataset and model are ready for training.\n";
-    std::cout << "----------------------------------------------------\n";
+    std::cout << "All checks passed! Dataset and model are ready for training.\n";
     return true;
 }
 inline void log_model_info(const std::vector<int> &layer_sizes,
@@ -221,26 +218,16 @@ inline void log_model_info(const std::vector<int> &layer_sizes,
                            size_t test_size,
                            double TRAIN_RATIO)
 {
-    std::cout << "\n📊  Model and Dataset Info\n";
-    std::cout << "===========================================\n";
-    // Log model shape
-    std::cout << "🧠 Model Shape:\n";
-    std::cout << "   ┌─────────────────────────┐\n";
-    std::cout << "   │ Input: " << input_features << " features       │\n";
+    std::cout << "\nModel and Dataset Info\n";
+    std::cout << "Input: " << input_features << " features\n";
     for (size_t i = 0; i < layer_sizes.size(); ++i)
     {
-        std::cout << "   ├── Layer " << i + 1 << ": " << layer_sizes[i] << " neurons    │\n";
+        std::cout << "Layer " << i + 1 << ": " << layer_sizes[i] << " neurons\n";
     }
-    std::cout << "   └─────────────────────────┘\n";
-    std::cout << "   ⮕ Output: " << output_targets << " targets\n";
-    // Log dataset info
-    std::cout << "\n📂 Dataset Info:\n";
-    std::cout << "   ┌────────────────────────┐\n";
-    std::cout << "   │ Training Samples:  " << train_size * TRAIN_RATIO << " │\n";
-    std::cout << "   │ Testing Samples:    " << test_size * (1 - TRAIN_RATIO) << " │\n";
-    std::cout << "   └────────────────────────┘\n";
-    std::cout << "        Train ratio       " << TRAIN_RATIO << "           \n";
-    std::cout << "===========================================\n\n";
+    std::cout << "Output: " << output_targets << " targets\n";
+    std::cout << "Training samples: " << train_size * TRAIN_RATIO << "\n";
+    std::cout << "Testing samples: " << test_size * (1 - TRAIN_RATIO) << "\n";
+    std::cout << "Train ratio: " << TRAIN_RATIO << "\n\n";
 }
 // #include <iostream>
 // #include <vector>
